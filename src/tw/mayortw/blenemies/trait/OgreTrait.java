@@ -9,10 +9,10 @@ import java.util.HashSet;
 import java.util.Set;
 import tw.mayortw.blenemies.goal.RandomStrollGoal;
 
-public class MercenaryTrait extends Trait {
+public class OgreTrait extends Trait {
 
-    public MercenaryTrait() {
-        super("mercenary");
+    public OgreTrait() {
+        super("ogre");
     }
 
     @Override
@@ -28,3 +28,4 @@ public class MercenaryTrait extends Trait {
         getNPC().getNavigator().getLocalParameters().stuckAction((a, n) -> {return false;});
     }
 }
+

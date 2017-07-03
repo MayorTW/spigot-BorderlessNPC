@@ -1,0 +1,10 @@
+name: Knight
+main: tw.mayortw.blenemies.BlEnemiesPlugin
+version: 0.1
+description: "無序敵人"
+author: "R26"
+depend:
+    - Citizens
+commands:
+    kt:
+        usage: "<command>"

@@ -49,6 +49,7 @@ public class BlEnemiesPlugin extends JavaPlugin {
                 npc.setProtected(false);
                 npc.getTrait(Equipment.class).set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.STONE_SWORD));
                 npc.data().setPersistent(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+                npc.data().setPersistent(NPC.COLLIDABLE_METADATA, true);
             }
             return true;
         }

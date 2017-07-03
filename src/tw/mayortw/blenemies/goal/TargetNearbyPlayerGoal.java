@@ -42,6 +42,12 @@ public class TargetNearbyPlayerGoal extends BehaviorGoalAdapter {
 
     @Override
     public BehaviorStatus run() {
+
+        if(target.getLocation().distance(npc.getEntity().getLocation()) > radius) {
+            reason = null;
+            finished = true;
+        }
+
         if (finished) {
             return reason == null ? BehaviorStatus.SUCCESS : BehaviorStatus.FAILURE;
         }

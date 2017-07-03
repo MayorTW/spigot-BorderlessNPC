@@ -25,7 +25,7 @@ public class BlEnemiesPlugin extends JavaPlugin {
         }
 
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BanditTrait.class).withName("bandit")); 
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ForestRobberTrait.class).withName("foresthorse")); 
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ForestRobberTrait.class).withName("forestrobber")); 
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MercenaryTrait.class).withName("mercenary")); 
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(OgreTrait.class).withName("ogre")); 
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PirateTrait.class).withName("pirate")); 
@@ -41,7 +41,8 @@ public class BlEnemiesPlugin extends JavaPlugin {
                 
                 NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "Herobrine");
 
-                npc.addTrait(BanditTrait.class);
+                //npc.addTrait(BanditTrait.class);
+                npc.addTrait(ForestRobberTrait.class);
                 npc.addTrait(Equipment.class);
 
                 npc.spawn(((Entity) sender).getLocation());

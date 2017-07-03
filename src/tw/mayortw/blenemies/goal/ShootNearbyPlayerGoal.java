@@ -1,11 +1,12 @@
 package tw.mayortw.blenemies.goal;
 
-// Mostly copied from net.citizensnpcs.api.ai.goals.TargetNearbyEntityGoal
+// Copied and edited from net.citizensnpcs.api.ai.goals.TargetNearbyEntityGoal
 // Excludes NPCs in this goal
 
 import java.util.Collection;
 //import java.util.Set;
 
+import net.citizensnpcs.api.ai.AttackStrategy;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
@@ -15,21 +16,28 @@ import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 
-public class TargetNearbyPlayerGoal extends BehaviorGoalAdapter {
+public class ShootNearbyPlayerGoal extends BehaviorGoalAdapter {
+
     private final boolean aggressive;
     private boolean finished;
     private final NPC npc;
     private final double radius;
+    private final double range;
     private CancelReason reason;
     private Entity target;
+    private ArrowAttackStrategy arrowAttack;
     //private final Set<EntityType> targets;
 
-    public TargetNearbyPlayerGoal(NPC npc, boolean aggressive, double radius) {
+    public ShootNearbyPlayerGoal(NPC npc, boolean aggressive, double radius, double range) {
         this.npc = npc;
         //this.targets = targets;
         this.aggressive = aggressive;
         this.radius = radius;
+        this.range = range;
+
+        arrowAttack = new ArrowAttackStrategy(npc);
     }
 
     @Override
@@ -66,7 +74,8 @@ public class TargetNearbyPlayerGoal extends BehaviorGoalAdapter {
             npc.getNavigator().setTarget(target, aggressive);
 
             NavigatorParameters params = npc.getNavigator().getLocalParameters();
-            params.attackStrategy(null); // Use default
+            params.attackRange(range * range);
+            params.attackStrategy(arrowAttack);
             params.addSingleUseCallback(new NavigatorCallback() {
                 @Override
                 public void onCompletion(CancelReason cancelReason) {
@@ -77,6 +86,24 @@ public class TargetNearbyPlayerGoal extends BehaviorGoalAdapter {
             return true;
         }
         return false;
+    }
+
+    private class ArrowAttackStrategy implements AttackStrategy {
+
+        private NPC npc;
+
+        ArrowAttackStrategy(NPC npc) {
+            this.npc = npc;
+        }
+
+        @Override
+        public boolean handle(LivingEntity attacker, LivingEntity target) {
+            if(npc.getEntity().equals(attacker)) {
+                npc.getNavigator().cancelNavigation();
+                return true;
+            }
+            return false;
+        }
     }
 }
 

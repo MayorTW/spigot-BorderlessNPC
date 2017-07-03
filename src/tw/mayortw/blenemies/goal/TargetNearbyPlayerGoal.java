@@ -4,8 +4,7 @@ package tw.mayortw.blenemies.goal;
 // Excludes NPCs in this goal
 
 import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Set;
+//import java.util.Set;
 
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;

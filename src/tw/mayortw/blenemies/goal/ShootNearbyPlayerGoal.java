@@ -104,9 +104,17 @@ public class ShootNearbyPlayerGoal extends BehaviorGoalAdapter {
         public boolean handle(LivingEntity attacker, LivingEntity target) {
             if(npc.getEntity().equals(attacker)) {
                 npc.getNavigator().cancelNavigation();
-                Projectile arrow = (Projectile) attacker.getWorld().spawnEntity(attacker.getEyeLocation(), EntityType.ARROW);
+
+                Location atkLoc = attacker.getEyeLocation();
+                Location tgtLoc = target.getLocation();
+
+                Projectile arrow = (Projectile) attacker.getWorld().spawnEntity(atkLoc.clone().add(atkLoc.getDirection().multiply(2)), EntityType.ARROW);
                 arrow.setShooter(attacker);
-                arrow.setVelocity(new Vector(0, 10, 0));
+
+                arrow.setVelocity(new Vector(
+                            tgtLoc.getX() - atkLoc.getX(),
+                            tgtLoc.getY() - atkLoc.getY() + 1,
+                            tgtLoc.getZ() - atkLoc.getZ()).normalize().multiply(2));
                 return true;
             }
             return false;

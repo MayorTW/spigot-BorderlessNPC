@@ -126,18 +126,22 @@ public class ShootNearbyPlayerGoal extends BehaviorGoalAdapter {
 
                 npc.faceLocation(tgtLoc);
 
-                Projectile arrow = (Projectile) attacker.getWorld().spawnEntity(atkLoc.clone().add(atkLoc.getDirection().normalize()), EntityType.ARROW);
+                if(attacker.getNoDamageTicks() == 0) {
+                    Projectile arrow = (Projectile) attacker.getWorld().spawnEntity(atkLoc.clone().add(atkLoc.getDirection().normalize()), EntityType.ARROW);
 
-                arrow.setShooter(attacker);
+                    arrow.setShooter(attacker);
 
-                arrow.setVelocity(new Vector(
-                            tgtLoc.getX() - atkLoc.getX(),
-                            tgtLoc.getY() - atkLoc.getY(),
-                            tgtLoc.getZ() - atkLoc.getZ()).normalize().multiply(2.2));
+                    arrow.setVelocity(new Vector(
+                                tgtLoc.getX() - atkLoc.getX(),
+                                tgtLoc.getY() - atkLoc.getY(),
+                                tgtLoc.getZ() - atkLoc.getZ()).normalize().multiply(2.2));
+
+                    attacker.setNoDamageTicks(60);
+                }
                 return true;
             }
             return false;
         }
     }
-}
+    }
 

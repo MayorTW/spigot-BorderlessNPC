@@ -14,6 +14,7 @@ import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -76,6 +77,7 @@ public class ShootNearbyPlayerGoal extends BehaviorGoalAdapter {
             npc.getNavigator().setTarget(target, aggressive);
 
             NavigatorParameters params = npc.getNavigator().getLocalParameters();
+            params.avoidWater(false);
             params.attackRange(range * range);
             params.attackStrategy(arrowAttack);
             params.addSingleUseCallback(new NavigatorCallback() {
@@ -102,7 +104,7 @@ public class ShootNearbyPlayerGoal extends BehaviorGoalAdapter {
         public boolean handle(LivingEntity attacker, LivingEntity target) {
             if(npc.getEntity().equals(attacker)) {
                 npc.getNavigator().cancelNavigation();
-                Projectile arrow = (Projectile) attacker.getWorld().spawnEntity(attacker.getLocation(), EntityType.ARROW);
+                Projectile arrow = (Projectile) attacker.getWorld().spawnEntity(attacker.getEyeLocation(), EntityType.ARROW);
                 arrow.setShooter(attacker);
                 arrow.setVelocity(new Vector(0, 10, 0));
                 return true;

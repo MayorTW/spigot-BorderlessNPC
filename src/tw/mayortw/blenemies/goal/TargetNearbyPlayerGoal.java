@@ -43,7 +43,7 @@ public class TargetNearbyPlayerGoal extends BehaviorGoalAdapter {
     @Override
     public BehaviorStatus run() {
 
-        if(target.getLocation().distance(npc.getEntity().getLocation()) > radius) {
+        if(target.getLocation().distanceSquared(npc.getEntity().getLocation()) > radius * radius) {
             reason = null;
             finished = true;
         }
@@ -72,6 +72,7 @@ public class TargetNearbyPlayerGoal extends BehaviorGoalAdapter {
             npc.getNavigator().setTarget(target, aggressive);
 
             NavigatorParameters params = npc.getNavigator().getLocalParameters();
+            params.avoidWater(false);
             params.attackStrategy(null); // Use default
             params.addSingleUseCallback(new NavigatorCallback() {
                 @Override

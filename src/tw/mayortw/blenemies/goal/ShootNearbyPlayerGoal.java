@@ -53,6 +53,22 @@ public class ShootNearbyPlayerGoal extends BehaviorGoalAdapter {
 
     @Override
     public BehaviorStatus run() {
+
+        double distance = target.getLocation().distanceSquared(npc.getEntity().getLocation());
+        if(distance  <= range * range &&
+                npc.getEntity() instanceof LivingEntity && target instanceof LivingEntity) {
+            // Navigator doesn't let me shoot when target is higher
+            // So I handle it myself
+            arrowAttack.handle((LivingEntity) npc.getEntity(), (LivingEntity) target);
+
+        }
+
+        if(distance > radius * radius || distance <= range * range) {
+            npc.getNavigator().cancelNavigation();
+            reason = null;
+            finished = true;
+        }
+
         if (finished) {
             return reason == null ? BehaviorStatus.SUCCESS : BehaviorStatus.FAILURE;
         }
@@ -78,8 +94,8 @@ public class ShootNearbyPlayerGoal extends BehaviorGoalAdapter {
 
             NavigatorParameters params = npc.getNavigator().getLocalParameters();
             params.avoidWater(false);
-            params.attackRange(range * range);
-            params.attackStrategy(arrowAttack);
+            //params.attackRange(range * range);
+            //params.attackStrategy(arrowAttack);
             params.addSingleUseCallback(new NavigatorCallback() {
                 @Override
                 public void onCompletion(CancelReason cancelReason) {
@@ -106,15 +122,18 @@ public class ShootNearbyPlayerGoal extends BehaviorGoalAdapter {
                 npc.getNavigator().cancelNavigation();
 
                 Location atkLoc = attacker.getEyeLocation();
-                Location tgtLoc = target.getLocation();
+                Location tgtLoc = target.getEyeLocation();
 
-                Projectile arrow = (Projectile) attacker.getWorld().spawnEntity(atkLoc.clone().add(atkLoc.getDirection().multiply(2)), EntityType.ARROW);
+                npc.faceLocation(tgtLoc);
+
+                Projectile arrow = (Projectile) attacker.getWorld().spawnEntity(atkLoc.clone().add(atkLoc.getDirection().normalize()), EntityType.ARROW);
+
                 arrow.setShooter(attacker);
 
                 arrow.setVelocity(new Vector(
                             tgtLoc.getX() - atkLoc.getX(),
-                            tgtLoc.getY() - atkLoc.getY() + 1,
-                            tgtLoc.getZ() - atkLoc.getZ()).normalize().multiply(2));
+                            tgtLoc.getY() - atkLoc.getY(),
+                            tgtLoc.getZ() - atkLoc.getZ()).normalize().multiply(2.2));
                 return true;
             }
             return false;

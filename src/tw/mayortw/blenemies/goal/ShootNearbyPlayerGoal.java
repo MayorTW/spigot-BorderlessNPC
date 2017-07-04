@@ -4,7 +4,6 @@ package tw.mayortw.blenemies.goal;
 // Excludes NPCs in this goal
 
 import java.util.Collection;
-//import java.util.Set;
 
 import net.citizensnpcs.api.ai.AttackStrategy;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -13,11 +12,13 @@ import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.util.PlayerAnimation;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.util.Vector;
 
@@ -77,13 +78,11 @@ public class ShootNearbyPlayerGoal extends BehaviorGoalAdapter {
 
     @Override
     public boolean shouldExecute() {
-        //if (targets.size() == 0 || !npc.isSpawned())
         if (!npc.isSpawned())
             return false;
         Collection<Entity> nearby = npc.getEntity().getNearbyEntities(radius, radius, radius);
         this.target = null;
         for (Entity entity : nearby) {
-            //if (targets.contains(entity.getType())) {
             if(entity.getType() == EntityType.PLAYER) {
                 target = entity;
                 break;
@@ -137,11 +136,18 @@ public class ShootNearbyPlayerGoal extends BehaviorGoalAdapter {
                                 tgtLoc.getZ() - atkLoc.getZ()).normalize().multiply(2.2));
 
                     attacker.setNoDamageTicks(60);
+                    useItem(attacker);
                 }
                 return true;
             }
             return false;
         }
-    }
-    }
 
+        public void useItem(Entity entity) {
+            if (entity instanceof Player) {
+                PlayerAnimation.START_USE_MAINHAND_ITEM.play((Player) entity);
+            }
+        }
+
+    }
+}

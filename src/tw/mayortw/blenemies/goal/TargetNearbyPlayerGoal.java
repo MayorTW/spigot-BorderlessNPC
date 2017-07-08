@@ -43,6 +43,8 @@ public class TargetNearbyPlayerGoal extends BehaviorGoalAdapter {
     @Override
     public BehaviorStatus run() {
 
+        npc.faceLocation(target.getLocation());
+
         if(target.getLocation().distanceSquared(npc.getEntity().getLocation()) > radius * radius) {
             reason = null;
             finished = true;

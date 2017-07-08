@@ -66,7 +66,7 @@ public class BlEnemiesPlugin extends JavaPlugin {
                             horse.data().setPersistent(NPC.COLLIDABLE_METADATA, true);
 
                             npc.setProtected(false);
-                            npc.getTrait(Equipment.class).set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.BOW));
+                            npc.getTrait(Equipment.class).set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.IRON_SWORD));
                             npc.data().setPersistent(NPC.NAMEPLATE_VISIBLE_METADATA, false);
                             npc.data().setPersistent(NPC.COLLIDABLE_METADATA, true);
 
@@ -83,7 +83,7 @@ public class BlEnemiesPlugin extends JavaPlugin {
                         npc.spawn(((Entity) sender).getLocation());
 
                         npc.setProtected(false);
-                        npc.getTrait(Equipment.class).set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.BOW));
+                        npc.getTrait(Equipment.class).set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.IRON_SWORD));
                         npc.data().setPersistent(NPC.NAMEPLATE_VISIBLE_METADATA, false);
                         npc.data().setPersistent(NPC.COLLIDABLE_METADATA, true);
 

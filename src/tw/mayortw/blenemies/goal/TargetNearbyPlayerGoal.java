@@ -11,12 +11,15 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
+import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class TargetNearbyPlayerGoal extends BehaviorGoalAdapter {
     private final boolean aggressive;
@@ -74,6 +77,10 @@ public class TargetNearbyPlayerGoal extends BehaviorGoalAdapter {
             }
         }
         if (target != null && !target.hasMetadata("NPC")) {
+
+            if(npc.hasTrait(Equipment.class))
+                    npc.getTrait(Equipment.class).set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.IRON_SWORD));
+
             npc.getNavigator().setTarget(target, aggressive);
 
             NavigatorParameters params = npc.getNavigator().getLocalParameters();

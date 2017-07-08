@@ -5,10 +5,10 @@ import net.citizensnpcs.api.trait.Trait;
 import tw.mayortw.blenemies.goal.RandomStrollGoal;
 import tw.mayortw.blenemies.goal.TargetNearbyPlayerGoal;
 
-public class OgreTrait extends Trait {
+public class OrcTrait extends Trait {
 
-    public OgreTrait() {
-        super("ogre");
+    public OrcTrait() {
+        super("orc");
     }
 
     @Override

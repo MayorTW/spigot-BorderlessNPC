@@ -33,7 +33,7 @@ public class BlEnemiesPlugin extends JavaPlugin {
         traitFact.registerTrait(TraitInfo.create(BanditTrait.class).withName("bandit")); 
         traitFact.registerTrait(TraitInfo.create(ForestRobberTrait.class).withName("forestrobber")); 
         traitFact.registerTrait(TraitInfo.create(MercenaryTrait.class).withName("mercenary")); 
-        traitFact.registerTrait(TraitInfo.create(OgreTrait.class).withName("ogre")); 
+        traitFact.registerTrait(TraitInfo.create(OrcTrait.class).withName("orc")); 
         traitFact.registerTrait(TraitInfo.create(PirateTrait.class).withName("pirate")); 
         traitFact.registerTrait(TraitInfo.create(SoundHorseTrait.class).withName("soundhorse")); 
         traitFact.registerTrait(TraitInfo.create(SoundRiderTrait.class).withName("soundrider")); 

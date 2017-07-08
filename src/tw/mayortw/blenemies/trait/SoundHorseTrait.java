@@ -20,5 +20,14 @@ public class SoundHorseTrait extends Trait {
 
         getNPC().getNavigator().getLocalParameters().stuckAction((a, n) -> {return false;});
     }
+
+    @Override
+    public void run() {
+        if(getNPC().isSpawned()) {
+            if(getNPC().getEntity().getPassengers().size() == 0) {
+                getNPC().despawn();
+            }
+        }
+    }
 }
 

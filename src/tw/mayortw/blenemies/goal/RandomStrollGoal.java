@@ -66,8 +66,10 @@ public class RandomStrollGoal extends BehaviorGoalAdapter implements Listener {
 
     @Override
     public BehaviorStatus run() {
-        if (!npc.getNavigator().isNavigating() || forceFinish)
+        if (!npc.getNavigator().isNavigating() || forceFinish) {
+            npc.getNavigator().getLocalParameters().speedModifier(1f);
             return BehaviorStatus.SUCCESS;
+        }
         return BehaviorStatus.RUNNING;
     }
 

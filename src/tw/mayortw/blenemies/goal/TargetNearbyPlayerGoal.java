@@ -13,8 +13,10 @@ import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
 
+import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 public class TargetNearbyPlayerGoal extends BehaviorGoalAdapter {
     private final boolean aggressive;
@@ -64,8 +66,9 @@ public class TargetNearbyPlayerGoal extends BehaviorGoalAdapter {
         Collection<Entity> nearby = npc.getEntity().getNearbyEntities(radius, radius, radius);
         this.target = null;
         for (Entity entity : nearby) {
-            //if (targets.contains(entity.getType())) {
-            if(entity.getType() == EntityType.PLAYER) {
+            if(entity.getType() == EntityType.PLAYER &&
+                    (((Player) entity).getGameMode() == GameMode.ADVENTURE ||
+                     ((Player) entity).getGameMode() == GameMode.SURVIVAL)) {
                 target = entity;
                 break;
             }

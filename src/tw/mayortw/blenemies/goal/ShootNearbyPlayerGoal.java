@@ -17,6 +17,7 @@ import net.citizensnpcs.util.PlayerAnimation;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.GameMode;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -83,7 +84,9 @@ public class ShootNearbyPlayerGoal extends BehaviorGoalAdapter {
         Collection<Entity> nearby = npc.getEntity().getNearbyEntities(radius, radius, radius);
         this.target = null;
         for (Entity entity : nearby) {
-            if(entity.getType() == EntityType.PLAYER) {
+            if(entity.getType() == EntityType.PLAYER &&
+                    (((Player) entity).getGameMode() == GameMode.ADVENTURE ||
+                     ((Player) entity).getGameMode() == GameMode.SURVIVAL)) {
                 target = entity;
                 break;
             }

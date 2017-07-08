@@ -27,7 +27,7 @@ public class BlEnemiesPlugin extends JavaPlugin {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BanditTrait.class).withName("bandit")); 
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ForestRobberTrait.class).withName("forestrobber")); 
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MercenaryTrait.class).withName("mercenary")); 
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(OgreTrait.class).withName("ogre")); 
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(OrcTrait.class).withName("orc")); 
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PirateTrait.class).withName("pirate")); 
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SoundHorseTrait.class).withName("soundhorse")); 
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SoundRiderTrait.class).withName("soundrider")); 

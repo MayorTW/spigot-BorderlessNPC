@@ -10,11 +10,15 @@ import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import tw.mayortw.blenemies.trait.*;
 
 public class BlEnemiesPlugin extends JavaPlugin {
+
+    private TraitFactory traitFact;
 
     @Override
     public void onEnable() {
@@ -24,13 +28,15 @@ public class BlEnemiesPlugin extends JavaPlugin {
             return;
         }
 
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BanditTrait.class).withName("bandit")); 
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ForestRobberTrait.class).withName("forestrobber")); 
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MercenaryTrait.class).withName("mercenary")); 
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(OgreTrait.class).withName("ogre")); 
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PirateTrait.class).withName("pirate")); 
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SoundHorseTrait.class).withName("soundhorse")); 
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SoundRiderTrait.class).withName("soundrider")); 
+        traitFact = CitizensAPI.getTraitFactory();
+
+        traitFact.registerTrait(TraitInfo.create(BanditTrait.class).withName("bandit")); 
+        traitFact.registerTrait(TraitInfo.create(ForestRobberTrait.class).withName("forestrobber")); 
+        traitFact.registerTrait(TraitInfo.create(MercenaryTrait.class).withName("mercenary")); 
+        traitFact.registerTrait(TraitInfo.create(OgreTrait.class).withName("ogre")); 
+        traitFact.registerTrait(TraitInfo.create(PirateTrait.class).withName("pirate")); 
+        traitFact.registerTrait(TraitInfo.create(SoundHorseTrait.class).withName("soundhorse")); 
+        traitFact.registerTrait(TraitInfo.create(SoundRiderTrait.class).withName("soundrider")); 
     }
 
     @Override
@@ -38,21 +44,53 @@ public class BlEnemiesPlugin extends JavaPlugin {
 
         if(cmd.getName().equalsIgnoreCase("kt")) {
             if(sender instanceof Entity) {
-                
-                NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "Herobrine");
+                if(args.length > 0) {
 
-                //npc.addTrait(BanditTrait.class);
-                npc.addTrait(ForestRobberTrait.class);
-                npc.addTrait(Equipment.class);
+                    Trait trait = traitFact.getTrait(args[0]);
+                    if(trait != null) {
 
-                npc.spawn(((Entity) sender).getLocation());
+                        if(args[0].equalsIgnoreCase("soundhorse") || args[0].equalsIgnoreCase("soundrider")) {
 
-                npc.setProtected(false);
-                npc.getTrait(Equipment.class).set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.BOW));
-                npc.data().setPersistent(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-                npc.data().setPersistent(NPC.COLLIDABLE_METADATA, true);
+                            NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "soundrider");
+                            NPC horse = CitizensAPI.getNPCRegistry().createNPC(EntityType.HORSE, "soundhorse");
+
+                            npc.addTrait(SoundRiderTrait.class);
+                            npc.addTrait(Equipment.class);
+                            horse.addTrait(SoundHorseTrait.class);
+
+                            npc.spawn(((Entity) sender).getLocation());
+                            horse.spawn(((Entity) sender).getLocation());
+
+                            horse.setProtected(false);
+                            horse.data().setPersistent(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+                            horse.data().setPersistent(NPC.COLLIDABLE_METADATA, true);
+
+                            npc.setProtected(false);
+                            npc.getTrait(Equipment.class).set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.BOW));
+                            npc.data().setPersistent(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+                            npc.data().setPersistent(NPC.COLLIDABLE_METADATA, true);
+
+                            horse.getEntity().addPassenger(npc.getEntity());
+
+                            return true;
+                        }
+
+                        NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, args[0]);
+
+                        npc.addTrait(trait);
+                        npc.addTrait(Equipment.class);
+
+                        npc.spawn(((Entity) sender).getLocation());
+
+                        npc.setProtected(false);
+                        npc.getTrait(Equipment.class).set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.BOW));
+                        npc.data().setPersistent(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+                        npc.data().setPersistent(NPC.COLLIDABLE_METADATA, true);
+
+                        return true;
+                    }
+                }
             }
-            return true;
         }
         return false;
     }

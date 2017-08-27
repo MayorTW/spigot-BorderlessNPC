@@ -1,7 +1,7 @@
-<project name="BorderlessEnemies" default="dist" basedir=".">
+<project name="BorderlessNPC" default="dist" basedir=".">
 
     <description>
-        無序敵人
+        無序NPC
     </description>
 
     <property name="version" value="0.1" />

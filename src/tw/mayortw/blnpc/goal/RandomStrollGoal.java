@@ -1,4 +1,4 @@
-package tw.mayortw.blenemies.goal;
+package tw.mayortw.blnpc.goal;
 
 /*
  * Mostly copied from net.citizensnpcs.api.ai.goals.WanderGoal

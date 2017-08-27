@@ -1,10 +1,10 @@
-name: Knight
-main: tw.mayortw.blenemies.BlEnemiesPlugin
+name: Borderless NPC
+main: tw.mayortw.blenemies.BlNPCPlugin
 version: 0.1
-description: "無序敵人"
+description: "無序NPC"
 author: "R26"
 depend:
     - Citizens
 commands:
-    kt:
+    blnpc:
         usage: "<command>"

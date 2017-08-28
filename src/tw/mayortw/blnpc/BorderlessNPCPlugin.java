@@ -81,8 +81,8 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
 
                 player.sendMessage("Set to " + loc.toString());
                 selectedNPCs.remove(player);
+                eve.setCancelled(true);
             }
-            eve.setCancelled(true);
         }
     }
 }

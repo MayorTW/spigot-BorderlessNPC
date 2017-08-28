@@ -38,21 +38,14 @@ public class StayNearHomeGoal extends BehaviorGoalAdapter implements Listener {
         this.yrange = yrange;
     }
 
-    private Location findRandomHomePosition() {
-        Location npcLoc = npc.getEntity().getLocation();
-        Location base = new Location(npcLoc.getWorld(),
-                npc.data().get(BorderlessNPCPlugin.HOME_X_METADATA),
-                npc.data().get(BorderlessNPCPlugin.HOME_Y_METADATA),
-                npc.data().get(BorderlessNPCPlugin.HOME_Z_METADATA));
+    private Location findRandomHomePosition(Location home) {
         Location found = null;
 
-        if(npcLoc.distanceSquared(base) < xrange * xrange) return null;
-
         for (int i = 0; i < 10; i++) {
-            int x = base.getBlockX() + random.nextInt(2 * xrange) - xrange;
-            int y = base.getBlockY() + random.nextInt(2 * yrange) - yrange;
-            int z = base.getBlockZ() + random.nextInt(2 * xrange) - xrange;
-            Block block = base.getWorld().getBlockAt(x, y, z);
+            int x = home.getBlockX() + random.nextInt(2 * xrange) - xrange;
+            int y = home.getBlockY() + random.nextInt(2 * yrange) - yrange;
+            int z = home.getBlockZ() + random.nextInt(2 * xrange) - xrange;
+            Block block = home.getWorld().getBlockAt(x, y, z);
             if (MinecraftBlockExaminer.canStandOn(block)
                     && MinecraftBlockExaminer.canStandIn(block.getRelative(BlockFace.UP).getType())) {
                 found = block.getLocation().add(0, 1, 0);
@@ -86,7 +79,19 @@ public class StayNearHomeGoal extends BehaviorGoalAdapter implements Listener {
     public boolean shouldExecute() {
         if (!npc.isSpawned() || npc.getNavigator().isNavigating())
             return false;
-        Location dest = findRandomHomePosition();
+        if(!npc.data().has(BorderlessNPCPlugin.HOME_X_METADATA) ||
+                !npc.data().has(BorderlessNPCPlugin.HOME_Y_METADATA) ||
+                !npc.data().has(BorderlessNPCPlugin.HOME_Z_METADATA))
+            return false;
+
+        Location npcLoc = npc.getEntity().getLocation();
+        Location home = new Location(npcLoc.getWorld(),
+                npc.data().get(BorderlessNPCPlugin.HOME_X_METADATA),
+                npc.data().get(BorderlessNPCPlugin.HOME_Y_METADATA),
+                npc.data().get(BorderlessNPCPlugin.HOME_Z_METADATA));
+        if(npcLoc.distanceSquared(home) < xrange * xrange) return false;
+
+        Location dest = findRandomHomePosition(home);
         if (dest == null)
             return false;
         npc.getNavigator().setTarget(dest);

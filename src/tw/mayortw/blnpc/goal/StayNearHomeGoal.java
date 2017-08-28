@@ -1,7 +1,7 @@
 package tw.mayortw.blnpc.goal;
 
 /*
- * Mostly copied from net.citizensnpcs.api.ai.goals.WanderGoal
+ * Edited from net.citizensnpcs.api.ai.goals.WanderGoal
  */
 
 import java.util.Random;
@@ -20,25 +20,34 @@ import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
 
-public class RandomStrollGoal extends BehaviorGoalAdapter implements Listener {
+import tw.mayortw.blnpc.BorderlessNPCPlugin;
+
+public class StayNearHomeGoal extends BehaviorGoalAdapter implements Listener {
     private boolean forceFinish;
     private final NPC npc;
     private final Random random = new Random();
     private final int xrange;
     private final int yrange;
 
-    public RandomStrollGoal(NPC npc) {
+    public StayNearHomeGoal(NPC npc) {
         this(npc, 10, 2);
     }
-    public RandomStrollGoal(NPC npc, int xrange, int yrange) {
+    public StayNearHomeGoal(NPC npc, int xrange, int yrange) {
         this.npc = npc;
         this.xrange = xrange;
         this.yrange = yrange;
     }
 
-    private Location findRandomPosition() {
-        Location base = npc.getEntity().getLocation();
+    private Location findRandomHomePosition() {
+        Location npcLoc = npc.getEntity().getLocation();
+        Location base = new Location(npcLoc.getWorld(),
+                npc.data().get(BorderlessNPCPlugin.HOME_X_METADATA),
+                npc.data().get(BorderlessNPCPlugin.HOME_Y_METADATA),
+                npc.data().get(BorderlessNPCPlugin.HOME_Z_METADATA));
         Location found = null;
+
+        if(npcLoc.distanceSquared(base) < xrange * xrange) return null;
+
         for (int i = 0; i < 10; i++) {
             int x = base.getBlockX() + random.nextInt(2 * xrange) - xrange;
             int y = base.getBlockY() + random.nextInt(2 * yrange) - yrange;
@@ -77,8 +86,7 @@ public class RandomStrollGoal extends BehaviorGoalAdapter implements Listener {
     public boolean shouldExecute() {
         if (!npc.isSpawned() || npc.getNavigator().isNavigating())
             return false;
-        if(random.nextInt(200) != 0) return false;
-        Location dest = findRandomPosition();
+        Location dest = findRandomHomePosition();
         if (dest == null)
             return false;
         npc.getNavigator().setTarget(dest);

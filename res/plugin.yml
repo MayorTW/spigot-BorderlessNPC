@@ -1,5 +1,5 @@
-name: Borderless NPC
-main: tw.mayortw.blenemies.BlNPCPlugin
+name: "BorderlessNPC"
+main: tw.mayortw.blnpc.BorderlessNPCPlugin
 version: 0.1
 description: "無序NPC"
 author: "R26"

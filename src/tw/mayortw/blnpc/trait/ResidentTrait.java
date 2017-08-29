@@ -8,10 +8,10 @@ import tw.mayortw.blnpc.goal.GoHomeAtNightGoal;
 import tw.mayortw.blnpc.goal.StayNearHomeGoal;
 import tw.mayortw.blnpc.goal.RandomStrollGoal;
 
-public class BorderlessTrait extends Trait {
+public class ResidentTrait extends Trait {
 
-    public BorderlessTrait() {
-        super("Borderless");
+    public ResidentTrait() {
+        super("Resident");
     }
 
     @Override

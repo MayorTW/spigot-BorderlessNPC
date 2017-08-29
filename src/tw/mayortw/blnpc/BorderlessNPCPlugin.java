@@ -17,7 +17,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitInfo;
 
-import tw.mayortw.blnpc.trait.BorderlessTrait;
+import tw.mayortw.blnpc.trait.ResidentTrait;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,13 +41,14 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
 
         TraitFactory traitFact = CitizensAPI.getTraitFactory();
-        traitFact.registerTrait(TraitInfo.create(BorderlessTrait.class).withName("borderless")); 
+        traitFact.registerTrait(TraitInfo.create(ResidentTrait.class).withName("resident")); 
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-        if(cmd.getName().equalsIgnoreCase("blnpc")) {
+        if(cmd.getName().equalsIgnoreCase("blnpc") &&
+                args.length > 0 && args[0].equalsIgnoreCase("sethome")) {
 
             NPC npc = CitizensAPI.getDefaultNPCSelector().getSelected(sender);
 
@@ -56,7 +57,7 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
                 return false;
             }
 
-            sender.sendMessage("Right click on the block");
+            sender.sendMessage("Right click on the block to set the home point");
             selectedNPCs.put(sender, npc);
 
             return true;

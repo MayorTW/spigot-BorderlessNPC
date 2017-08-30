@@ -80,7 +80,11 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
                 npc.data().setPersistent(HOME_Y_METADATA, loc.getY());
                 npc.data().setPersistent(HOME_Z_METADATA, loc.getZ());
 
-                player.sendMessage("Set to " + loc.toString());
+                player.sendMessage("Set to " +
+                        loc.getX() + ", " +
+                        loc.getY() + ", " +
+                        loc.getZ());
+
                 selectedNPCs.remove(player);
                 eve.setCancelled(true);
             }

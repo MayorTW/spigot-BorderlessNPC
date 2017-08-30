@@ -5,7 +5,9 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -19,6 +21,7 @@ import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.util.PlayerAnimation;
 
 import java.util.ListIterator;
 
@@ -87,9 +90,11 @@ public class ResidentTrait extends Trait {
 
                     if(distance < 2) {
 
-                        if(!door.isOpen())
+                        if(!door.isOpen()) {
                             doorBlock.getWorld().playSound(doorBlock.getLocation(),
                                     Sound.BLOCK_WOODEN_DOOR_OPEN, .8f, 1);
+                            swingArm(npc.getEntity());
+                        }
 
                         door.setOpen(true);
                         state.setData(door);
@@ -98,9 +103,11 @@ public class ResidentTrait extends Trait {
                     if(distance > 2 || !npc.getNavigator().isNavigating()) {
 
 
-                        if(door.isOpen())
+                        if(door.isOpen()) {
                             doorBlock.getWorld().playSound(doorBlock.getLocation(),
                                     Sound.BLOCK_WOODEN_DOOR_CLOSE, .8f, 1);
+                            swingArm(npc.getEntity());
+                        }
 
                         door.setOpen(false);
                         state.setData(door);
@@ -131,6 +138,12 @@ public class ResidentTrait extends Trait {
             if(!checkerRunning) {
                 checkerRunning = true;
                 doorChecker.runTaskTimer(BorderlessNPCPlugin.getPlugin(BorderlessNPCPlugin.class), 5, 10);
+            }
+        }
+
+        private void swingArm(Entity entity) {
+            if (entity instanceof Player) {
+                PlayerAnimation.ARM_SWING.play((Player) entity);
             }
         }
     }

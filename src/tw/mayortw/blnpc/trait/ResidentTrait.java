@@ -50,6 +50,7 @@ public class ResidentTrait extends Trait {
         navParm.stuckAction((a, n) -> {return false;});
         navParm.examiner(new DoorExaminer());
         navParm.stationaryTicks(300);
+        navParm.useNewPathfinder(true);
 
     }
 

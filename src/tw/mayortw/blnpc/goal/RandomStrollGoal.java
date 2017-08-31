@@ -39,7 +39,7 @@ public class RandomStrollGoal extends BehaviorGoalAdapter implements Listener {
     private Location findRandomPosition() {
         Location base = npc.getEntity().getLocation();
         Location found = null;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 50; i++) {
             int x = base.getBlockX() + random.nextInt(2 * xrange) - xrange;
             int y = base.getBlockY() + random.nextInt(2 * yrange) - yrange;
             int z = base.getBlockZ() + random.nextInt(2 * xrange) - xrange;

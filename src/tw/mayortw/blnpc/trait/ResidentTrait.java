@@ -49,7 +49,7 @@ public class ResidentTrait extends Trait {
         NavigatorParameters navParm = getNPC().getNavigator().getLocalParameters();
         navParm.stuckAction((a, n) -> {return false;});
         navParm.examiner(new DoorExaminer());
-        navParm.stationaryTicks(300);
+        navParm.stationaryTicks(100);
         navParm.useNewPathfinder(true);
 
     }

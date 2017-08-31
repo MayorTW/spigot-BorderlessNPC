@@ -41,14 +41,13 @@ public class StayNearHomeGoal extends BehaviorGoalAdapter implements Listener {
     private Location findRandomHomePosition(Location home) {
         Location found = null;
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 50; i++) {
             int x = home.getBlockX() + random.nextInt(2 * xrange) - xrange;
             int y = home.getBlockY() + random.nextInt(2 * yrange) - yrange;
             int z = home.getBlockZ() + random.nextInt(2 * xrange) - xrange;
             Block block = home.getWorld().getBlockAt(x, y, z);
-            if (MinecraftBlockExaminer.canStandOn(block)
-                    && MinecraftBlockExaminer.canStandIn(block.getRelative(BlockFace.UP).getType())) {
-                found = block.getLocation().add(0, 1, 0);
+            if (MinecraftBlockExaminer.validPosition(block)) {
+                found = block.getLocation();
                 break;
             }
         }

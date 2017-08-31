@@ -44,9 +44,8 @@ public class RandomStrollGoal extends BehaviorGoalAdapter implements Listener {
             int y = base.getBlockY() + random.nextInt(2 * yrange) - yrange;
             int z = base.getBlockZ() + random.nextInt(2 * xrange) - xrange;
             Block block = base.getWorld().getBlockAt(x, y, z);
-            if (MinecraftBlockExaminer.canStandOn(block)
-                    && MinecraftBlockExaminer.canStandIn(block.getRelative(BlockFace.UP).getType())) {
-                found = block.getLocation().add(0, 1, 0);
+            if (MinecraftBlockExaminer.validPosition(block)) {
+                found = block.getLocation();
                 break;
             }
         }

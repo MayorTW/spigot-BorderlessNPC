@@ -50,6 +50,7 @@ public class ResidentTrait extends Trait {
         navParm.stuckAction((a, n) -> {return false;});
         navParm.examiner(new DoorExaminer());
         navParm.stationaryTicks(100);
+        navParm.distanceMargin(2.5);
         navParm.useNewPathfinder(true);
 
     }
@@ -85,49 +86,19 @@ public class ResidentTrait extends Trait {
             public void run() {
                 if(doorBlock != null && door != null && npc != null) {
 
-                    npc.getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
-                        openDoor(false);
-                        stopChecking();
-                    });
-
                     double distance = npc.getStoredLocation().distance(doorBlock.getLocation());
 
                     if(distance > 2) {
-                        if(door.isOpen()) {
-                            doorBlock.getWorld().playSound(doorBlock.getLocation(),
-                                    Sound.BLOCK_WOODEN_DOOR_CLOSE, .8f, 1);
-                            swingArm(npc.getEntity());
-                        }
-
                         openDoor(false);
-                        stopChecking();
+                        this.cancel();
                     } else {
-
-                        if(!door.isOpen()) {
-                            doorBlock.getWorld().playSound(doorBlock.getLocation(),
-                                    Sound.BLOCK_WOODEN_DOOR_OPEN, .8f, 1);
-                            swingArm(npc.getEntity());
-                        }
                         openDoor(true);
                     }
 
                 } else {
-                    stopChecking();
+                    this.cancel();
                 }
             }
-
-            private void openDoor(boolean open) {
-                BlockState state = doorBlock.getState();
-
-                door.setOpen(open);
-                state.setData(door);
-                state.update();
-            }
-
-            private void stopChecking() {
-                this.cancel();
-            }
-
         };
 
         @Override
@@ -145,6 +116,12 @@ public class ResidentTrait extends Trait {
             try {
                 doorChecker.getTaskId();
             } catch(IllegalStateException exc) {
+
+                npc.getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
+                    openDoor(false);
+                    doorChecker.cancel();
+                });
+
                 doorChecker.runTaskTimer(BorderlessNPCPlugin.getPlugin(BorderlessNPCPlugin.class), 5, 10);
             }
         }
@@ -154,5 +131,21 @@ public class ResidentTrait extends Trait {
                 PlayerAnimation.ARM_SWING.play((Player) entity);
             }
         }
+
+        private void openDoor(boolean open) {
+            BlockState state = doorBlock.getState();
+
+            if(door.isOpen() != open) {
+                doorBlock.getWorld().playSound(doorBlock.getLocation(),
+                        open ? Sound.BLOCK_WOODEN_DOOR_OPEN : Sound.BLOCK_WOODEN_DOOR_CLOSE,
+                        .8f, 1);
+                swingArm(npc.getEntity());
+            }
+
+            door.setOpen(open);
+            state.setData(door);
+                state.update();
+            }
+
     }
 }

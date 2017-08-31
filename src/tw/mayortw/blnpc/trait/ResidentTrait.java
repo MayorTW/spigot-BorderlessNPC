@@ -85,40 +85,49 @@ public class ResidentTrait extends Trait {
             public void run() {
                 if(doorBlock != null && door != null && npc != null) {
 
-                    BlockState state = doorBlock.getState();
+                    npc.getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
+                        openDoor(false);
+                        stopChecking();
+                    });
+
                     double distance = npc.getStoredLocation().distance(doorBlock.getLocation());
 
-                    if(distance < 2) {
-
-                        if(!door.isOpen()) {
-                            doorBlock.getWorld().playSound(doorBlock.getLocation(),
-                                    Sound.BLOCK_WOODEN_DOOR_OPEN, .8f, 1);
-                            swingArm(npc.getEntity());
-                        }
-
-                        door.setOpen(true);
-                        state.setData(door);
-                        state.update();
-                    }
-                    if(distance > 2.5 || !npc.getNavigator().isNavigating()) {
-
-
+                    if(distance > 2) {
                         if(door.isOpen()) {
                             doorBlock.getWorld().playSound(doorBlock.getLocation(),
                                     Sound.BLOCK_WOODEN_DOOR_CLOSE, .8f, 1);
                             swingArm(npc.getEntity());
                         }
 
-                        door.setOpen(false);
-                        state.setData(door);
-                        state.update();
+                        openDoor(false);
+                        stopChecking();
+                    } else {
 
-                        this.cancel();
+                        if(!door.isOpen()) {
+                            doorBlock.getWorld().playSound(doorBlock.getLocation(),
+                                    Sound.BLOCK_WOODEN_DOOR_OPEN, .8f, 1);
+                            swingArm(npc.getEntity());
+                        }
+                        openDoor(true);
                     }
+
                 } else {
-                    this.cancel();
+                    stopChecking();
                 }
             }
+
+            private void openDoor(boolean open) {
+                BlockState state = doorBlock.getState();
+
+                door.setOpen(open);
+                state.setData(door);
+                state.update();
+            }
+
+            private void stopChecking() {
+                this.cancel();
+            }
+
         };
 
         @Override

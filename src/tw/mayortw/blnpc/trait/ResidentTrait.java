@@ -75,10 +75,9 @@ public class ResidentTrait extends Trait {
 
     private static class DoorOpener implements PathCallback {
 
-        Block doorBlock;
-        Door door;
-        NPC npc;
-        boolean checkerRunning;
+        private Block doorBlock;
+        private Door door;
+        private NPC npc;
 
         private BukkitRunnable doorChecker = new BukkitRunnable() {
 
@@ -115,11 +114,9 @@ public class ResidentTrait extends Trait {
                         state.update();
 
                         this.cancel();
-                        checkerRunning = false;
                     }
                 } else {
                     this.cancel();
-                    checkerRunning = false;
                 }
             }
         };
@@ -136,8 +133,9 @@ public class ResidentTrait extends Trait {
 
             this.npc = npc;
 
-            if(!checkerRunning) {
-                checkerRunning = true;
+            try {
+                doorChecker.getTaskId();
+            } catch(IllegalStateException exc) {
                 doorChecker.runTaskTimer(BorderlessNPCPlugin.getPlugin(BorderlessNPCPlugin.class), 5, 10);
             }
         }

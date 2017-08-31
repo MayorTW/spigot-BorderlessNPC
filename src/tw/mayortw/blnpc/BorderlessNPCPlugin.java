@@ -47,20 +47,27 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-        if(cmd.getName().equalsIgnoreCase("blnpc") &&
-                args.length > 0 && args[0].equalsIgnoreCase("sethome")) {
-
+        if(cmd.getName().equalsIgnoreCase("blnpc") && args.length > 0) {
             NPC npc = CitizensAPI.getDefaultNPCSelector().getSelected(sender);
 
             if(npc == null) {
                 sender.sendMessage("Select a NPC first");
-                return false;
+                return true;
             }
 
-            sender.sendMessage("Right click on the block to set the home point");
-            selectedNPCs.put(sender, npc);
+            switch(args[0].toLowerCase()) {
+                case "sethome":
+                    sender.sendMessage("Right click on the block to set the home point");
+                    selectedNPCs.put(sender, npc);
+                    return true;
+                case "clearhome":
+                    npc.data().remove(HOME_X_METADATA);
+                    npc.data().remove(HOME_Y_METADATA);
+                    npc.data().remove(HOME_Z_METADATA);
+                    sender.sendMessage("Home point for " + npc.getName() + " cleared");
+                    return true;
+            }
 
-            return true;
         }
         return false;
     }
@@ -80,7 +87,7 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
                 npc.data().setPersistent(HOME_Y_METADATA, loc.getY());
                 npc.data().setPersistent(HOME_Z_METADATA, loc.getZ());
 
-                player.sendMessage("Set to " +
+                player.sendMessage("Home point for " + npc.getName() + " set to " +
                         loc.getX() + ", " +
                         loc.getY() + ", " +
                         loc.getZ());

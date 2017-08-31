@@ -7,4 +7,4 @@ depend:
     - Citizens
 commands:
     blnpc:
-        usage: "Usage: /<command> sethome"
+        usage: "Usage: /<command> <sethome|clearhome>"

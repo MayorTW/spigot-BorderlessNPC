@@ -100,7 +100,7 @@ public class ResidentTrait extends Trait {
                         state.setData(door);
                         state.update();
                     }
-                    if(distance > 2 || !npc.getNavigator().isNavigating()) {
+                    if(distance > 2.5 || !npc.getNavigator().isNavigating()) {
 
 
                         if(door.isOpen()) {

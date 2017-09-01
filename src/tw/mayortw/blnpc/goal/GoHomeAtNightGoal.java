@@ -58,7 +58,7 @@ public class GoHomeAtNightGoal extends BehaviorGoalAdapter {
                 npc.data().get(BorderlessNPCPlugin.HOME_Z_METADATA));
 
         if (npcLoc.getWorld() != target.getWorld() || npcLoc.distanceSquared(target) <= npc
-                .getNavigator().getLocalParameters().distanceMargin())
+                .getNavigator().getLocalParameters().distanceMargin() + 1)
             return false;
 
         npc.getNavigator().setTarget(target);

@@ -143,8 +143,7 @@ public class ResidentTrait extends Trait {
 
             door.setOpen(open);
             state.setData(door);
-                state.update();
-            }
-
+            state.update();
+        }
     }
 }

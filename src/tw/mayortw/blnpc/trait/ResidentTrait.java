@@ -1,5 +1,7 @@
 package tw.mayortw.blnpc.trait;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -12,7 +14,10 @@ import org.bukkit.material.Door;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.citizensnpcs.api.ai.GoalController;
+import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.NavigatorParameters;
+import net.citizensnpcs.api.ai.StuckAction;
+import net.citizensnpcs.api.ai.event.NavigationStuckEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
@@ -32,6 +37,8 @@ import tw.mayortw.blnpc.goal.RandomStrollGoal;
 
 public class ResidentTrait extends Trait {
 
+    private int lastX, lastZ, stationaryTicks; // Edited from net.citizensnpcs.npc.ai.CitizensNavigator
+
     public ResidentTrait() {
         super("Resident");
     }
@@ -48,13 +55,47 @@ public class ResidentTrait extends Trait {
 
         NavigatorParameters navParm = getNPC().getNavigator().getLocalParameters();
         navParm.stuckAction((a, n) -> {return false;});
+        navParm.addSingleUseCallback(cancelReason -> stationaryTicks = 0);
         navParm.examiner(new DoorExaminer());
         navParm.stationaryTicks(100);
         navParm.useNewPathfinder(true);
-
     }
 
     // Edited from net.citizensnpcs.npc.ai.CitizensNavigator
+
+    /*
+     * The stuck action will not be called if NPC is jumping, so I handle it myself
+     */
+
+    @Override
+    public void run() {
+        if(!npc.isSpawned()) return;
+
+        Navigator navigator = npc.getNavigator();
+        NavigatorParameters localParams = navigator.getLocalParameters();
+        if (localParams.stationaryTicks() < 0)
+            return;
+        Location current = npc.getEntity().getLocation();
+        if (lastX == current.getBlockX() && lastZ == current.getBlockZ()) {
+            if (++stationaryTicks >= localParams.stationaryTicks()) {
+                StuckAction action = localParams.stuckAction();
+                NavigationStuckEvent event = new NavigationStuckEvent(navigator, action);
+                Bukkit.getPluginManager().callEvent(event);
+                action = event.getAction();
+                boolean shouldContinue = action != null ? action.run(npc, navigator) : false;
+                if (shouldContinue) {
+                    stationaryTicks = 0;
+                } else {
+                    navigator.cancelNavigation();
+                }
+                return;
+            }
+        } else
+            stationaryTicks = 0;
+        lastX = current.getBlockX();
+        lastZ = current.getBlockZ();
+    }
+
 
     public static class DoorExaminer implements BlockExaminer {
         @Override

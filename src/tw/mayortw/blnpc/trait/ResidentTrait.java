@@ -58,6 +58,7 @@ public class ResidentTrait extends Trait {
         navParm.addSingleUseCallback(cancelReason -> stationaryTicks = 0);
         navParm.examiner(new DoorExaminer());
         navParm.stationaryTicks(100);
+        navParm.distanceMargin(1.5);
         navParm.useNewPathfinder(true);
     }
 

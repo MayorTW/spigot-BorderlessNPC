@@ -72,28 +72,31 @@ public class ResidentTrait extends Trait {
         if(!npc.isSpawned()) return;
 
         Navigator navigator = npc.getNavigator();
-        NavigatorParameters localParams = navigator.getLocalParameters();
-        if (localParams.stationaryTicks() < 0)
-            return;
-        Location current = npc.getEntity().getLocation();
-        if (lastX == current.getBlockX() && lastZ == current.getBlockZ()) {
-            if (++stationaryTicks >= localParams.stationaryTicks()) {
-                StuckAction action = localParams.stuckAction();
-                NavigationStuckEvent event = new NavigationStuckEvent(navigator, action);
-                Bukkit.getPluginManager().callEvent(event);
-                action = event.getAction();
-                boolean shouldContinue = action != null ? action.run(npc, navigator) : false;
-                if (shouldContinue) {
-                    stationaryTicks = 0;
-                } else {
-                    navigator.cancelNavigation();
-                }
+
+        if(navigator.isNavigating()) {
+            NavigatorParameters localParams = navigator.getLocalParameters();
+            if (localParams.stationaryTicks() < 0)
                 return;
-            }
-        } else
-            stationaryTicks = 0;
-        lastX = current.getBlockX();
-        lastZ = current.getBlockZ();
+            Location current = npc.getEntity().getLocation();
+            if (lastX == current.getBlockX() && lastZ == current.getBlockZ()) {
+                if (++stationaryTicks >= localParams.stationaryTicks()) {
+                    StuckAction action = localParams.stuckAction();
+                    NavigationStuckEvent event = new NavigationStuckEvent(navigator, action);
+                    Bukkit.getPluginManager().callEvent(event);
+                    action = event.getAction();
+                    boolean shouldContinue = action != null ? action.run(npc, navigator) : false;
+                    if (shouldContinue) {
+                        stationaryTicks = 0;
+                    } else {
+                        navigator.cancelNavigation();
+                    }
+                    return;
+                }
+            } else
+                stationaryTicks = 0;
+            lastX = current.getBlockX();
+            lastZ = current.getBlockZ();
+        }
     }
 
 

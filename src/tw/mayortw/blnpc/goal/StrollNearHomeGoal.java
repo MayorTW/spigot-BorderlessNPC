@@ -22,17 +22,17 @@ import net.citizensnpcs.api.npc.NPC;
 
 import tw.mayortw.blnpc.BorderlessNPCPlugin;
 
-public class StayNearHomeGoal extends BehaviorGoalAdapter implements Listener {
+public class StrollNearHomeGoal extends BehaviorGoalAdapter implements Listener {
     private boolean forceFinish;
     private final NPC npc;
     private final Random random = new Random();
     private final int xrange;
     private final int yrange;
 
-    public StayNearHomeGoal(NPC npc) {
+    public StrollNearHomeGoal(NPC npc) {
         this(npc, 10, 2);
     }
-    public StayNearHomeGoal(NPC npc, int xrange, int yrange) {
+    public StrollNearHomeGoal(NPC npc, int xrange, int yrange) {
         this.npc = npc;
         this.xrange = xrange;
         this.yrange = yrange;
@@ -78,6 +78,9 @@ public class StayNearHomeGoal extends BehaviorGoalAdapter implements Listener {
     public boolean shouldExecute() {
         if (!npc.isSpawned() || npc.getNavigator().isNavigating())
             return false;
+
+        if(random.nextInt(200) != 0) return false;
+
         if(!npc.data().has(BorderlessNPCPlugin.HOME_X_METADATA) ||
                 !npc.data().has(BorderlessNPCPlugin.HOME_Y_METADATA) ||
                 !npc.data().has(BorderlessNPCPlugin.HOME_Z_METADATA))
@@ -88,7 +91,6 @@ public class StayNearHomeGoal extends BehaviorGoalAdapter implements Listener {
                 npc.data().get(BorderlessNPCPlugin.HOME_X_METADATA),
                 npc.data().get(BorderlessNPCPlugin.HOME_Y_METADATA),
                 npc.data().get(BorderlessNPCPlugin.HOME_Z_METADATA));
-        if(npcLoc.distanceSquared(home) < xrange * xrange) return false;
 
         Location dest = findRandomHomePosition(home);
         if (dest == null)

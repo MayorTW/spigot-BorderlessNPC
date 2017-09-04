@@ -32,7 +32,7 @@ import java.util.ListIterator;
 
 import tw.mayortw.blnpc.BorderlessNPCPlugin;
 import tw.mayortw.blnpc.goal.GoHomeAtNightGoal;
-import tw.mayortw.blnpc.goal.StayNearHomeGoal;
+import tw.mayortw.blnpc.goal.StrollNearHomeGoal;
 import tw.mayortw.blnpc.goal.RandomStrollGoal;
 
 public class ResidentTrait extends Trait {
@@ -49,9 +49,8 @@ public class ResidentTrait extends Trait {
         npc.getTrait(LookClose.class).lookClose(true);
 
         GoalController goalCtl = getNPC().getDefaultGoalController();
-        goalCtl.addGoal(new GoHomeAtNightGoal(getNPC()), 3);
-        goalCtl.addGoal(new StayNearHomeGoal(getNPC(), 10, 10), 2);
-        goalCtl.addGoal(new RandomStrollGoal(getNPC(), 10, 10), 1);
+        goalCtl.addGoal(new GoHomeAtNightGoal(getNPC()), 2);
+        goalCtl.addGoal(new StrollNearHomeGoal(getNPC(), 10, 10), 1);
 
         NavigatorParameters navParm = getNPC().getNavigator().getLocalParameters();
         navParm.stuckAction((a, n) -> {return false;});

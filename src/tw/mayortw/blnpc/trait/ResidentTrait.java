@@ -29,6 +29,7 @@ import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.util.PlayerAnimation;
 
 import java.util.ListIterator;
+import java.util.Random;
 
 import tw.mayortw.blnpc.BorderlessNPCPlugin;
 import tw.mayortw.blnpc.goal.GoHomeAtNightGoal;
@@ -38,6 +39,11 @@ import tw.mayortw.blnpc.goal.RandomStrollGoal;
 public class ResidentTrait extends Trait {
 
     private int lastX, lastZ, stationaryTicks; // Edited from net.citizensnpcs.npc.ai.CitizensNavigator
+    private Random random = new Random();
+    private Sound[] sounds = {  Sound.ENTITY_VILLAGER_AMBIENT,
+                                Sound.ENTITY_VILLAGER_TRADING,
+                                Sound.ENTITY_VILLAGER_YES,
+                                Sound.ENTITY_VILLAGER_NO};
 
     public ResidentTrait() {
         super("Resident");
@@ -61,14 +67,25 @@ public class ResidentTrait extends Trait {
         navParm.useNewPathfinder(true);
     }
 
+    @Override
+    public void run() {
+        checkStationaryStatus();
+
+        if(npc.isSpawned() && random.nextInt(100) == 0) {
+            // Make some noise
+            npc.getEntity().getWorld().playSound(npc.getEntity().getLocation(),
+                    sounds[random.nextInt(sounds.length)], 1, 1);
+        }
+    }
+
     // Edited from net.citizensnpcs.npc.ai.CitizensNavigator
 
     /*
-     * The stuck action will not be called if NPC is jumping, so I handle it myself
+     * The stuck action will not be called by Citizens API if NPC is jumping
+     * so I handle it myself
      */
 
-    @Override
-    public void run() {
+    private void checkStationaryStatus() {
         if(!npc.isSpawned()) return;
 
         Navigator navigator = npc.getNavigator();

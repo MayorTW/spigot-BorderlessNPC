@@ -40,6 +40,7 @@ public class ResidentTrait extends Trait {
 
     private int lastX, lastZ, stationaryTicks; // Edited from net.citizensnpcs.npc.ai.CitizensNavigator
     private Random random = new Random();
+    private int soundCountdown;
     private Sound[] sounds = {  Sound.ENTITY_VILLAGER_AMBIENT,
                                 Sound.ENTITY_VILLAGER_TRADING,
                                 Sound.ENTITY_VILLAGER_YES,
@@ -71,11 +72,12 @@ public class ResidentTrait extends Trait {
     public void run() {
         checkStationaryStatus();
 
-        if(npc.isSpawned() && random.nextInt(100) == 0) {
+        if(npc.isSpawned() && soundCountdown <= 0) {
             // Make some noise
             npc.getEntity().getWorld().playSound(npc.getEntity().getLocation(),
                     sounds[random.nextInt(sounds.length)], 1, 1);
-        }
+            soundCountdown = 100 + random.nextInt(100);
+        } else soundCountdown--;
     }
 
     // Edited from net.citizensnpcs.npc.ai.CitizensNavigator

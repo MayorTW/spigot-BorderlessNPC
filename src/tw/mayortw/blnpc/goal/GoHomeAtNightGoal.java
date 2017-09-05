@@ -10,6 +10,10 @@ import org.bukkit.Location;
 
 import tw.mayortw.blnpc.BorderlessNPCPlugin;
 
+/*
+ * Get NPC go home during night / raining / snowing
+ */
+
 public class GoHomeAtNightGoal extends BehaviorGoalAdapter {
 
     private static final int DAY_TIME = 24000;
@@ -41,21 +45,22 @@ public class GoHomeAtNightGoal extends BehaviorGoalAdapter {
     @Override
     public boolean shouldExecute() {
 
-        long currTime = npc.getEntity().getWorld().getTime();
-
         if(!npc.data().has(BorderlessNPCPlugin.HOME_X_METADATA) ||
                 !npc.data().has(BorderlessNPCPlugin.HOME_Y_METADATA) ||
                 !npc.data().has(BorderlessNPCPlugin.HOME_Z_METADATA))
             return false;
 
-        if(currTime > DAY_TIME || currTime < NIGHT_TIME)
-            return false;
-
+        long currTime = npc.getEntity().getWorld().getTime();
         Location npcLoc = npc.getEntity().getLocation();
         Location target = new Location(npcLoc.getWorld(),
                 npc.data().get(BorderlessNPCPlugin.HOME_X_METADATA),
                 npc.data().get(BorderlessNPCPlugin.HOME_Y_METADATA),
                 npc.data().get(BorderlessNPCPlugin.HOME_Z_METADATA));
+
+        if(currTime > DAY_TIME || currTime < NIGHT_TIME) {
+            if(!npcLoc.getWorld().hasStorm())
+                return false;
+        }
 
         if (npcLoc.getWorld() != target.getWorld() || npcLoc.distanceSquared(target) <= npc
                 .getNavigator().getLocalParameters().distanceMargin() + 1)

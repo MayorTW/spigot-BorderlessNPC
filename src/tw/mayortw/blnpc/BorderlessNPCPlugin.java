@@ -8,11 +8,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitInfo;
@@ -107,6 +109,21 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
 
                 selectedNPCs.remove(player);
                 eve.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent eve) {
+        NPCRegistry registry = CitizensAPI.getNPCRegistry();
+        if(registry.isNPC(eve.getEntity())) {
+            NPC npc = registry.getNPC(eve.getEntity());
+            for(Trait trait : npc.getTraits()) {
+                if(trait.getClass() == GuardTrait.class ||
+                        trait.getClass() == ResidentTrait.class) {
+                    eve.setDamage(0);
+                    break;
+                }
             }
         }
     }

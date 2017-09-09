@@ -8,3 +8,7 @@ depend:
 commands:
     blnpc:
         usage: "Usage: /<command> <sethome|clearhome>"
+        permission: blnpc.edit
+permissions:
+    blnpc.edit:
+        default: op

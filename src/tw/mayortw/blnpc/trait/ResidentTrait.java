@@ -8,7 +8,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -34,7 +33,6 @@ import java.util.Random;
 import tw.mayortw.blnpc.BorderlessNPCPlugin;
 import tw.mayortw.blnpc.goal.GoHomeAtNightGoal;
 import tw.mayortw.blnpc.goal.StrollNearHomeGoal;
-import tw.mayortw.blnpc.goal.RandomStrollGoal;
 
 public class ResidentTrait extends Trait {
 
@@ -54,6 +52,7 @@ public class ResidentTrait extends Trait {
     public void onAttach() {
 
         npc.getTrait(LookClose.class).lookClose(true);
+        npc.setProtected(false);
 
         GoalController goalCtl = getNPC().getDefaultGoalController();
         goalCtl.addGoal(new GoHomeAtNightGoal(getNPC()), 2);

@@ -17,6 +17,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitInfo;
 
+import tw.mayortw.blnpc.trait.GuardTrait;
 import tw.mayortw.blnpc.trait.ResidentTrait;
 
 import java.util.HashMap;
@@ -42,7 +43,8 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
 
         TraitFactory traitFact = CitizensAPI.getTraitFactory();
-        traitFact.registerTrait(TraitInfo.create(ResidentTrait.class).withName("resident")); 
+        traitFact.registerTrait(TraitInfo.create(GuardTrait.class).withName("guard"));
+        traitFact.registerTrait(TraitInfo.create(ResidentTrait.class).withName("resident"));
     }
 
     @Override

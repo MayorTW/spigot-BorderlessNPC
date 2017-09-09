@@ -18,6 +18,7 @@ import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
+import net.citizensnpcs.api.npc.MetadataStore;
 import net.citizensnpcs.api.npc.NPC;
 
 import tw.mayortw.blnpc.BorderlessNPCPlugin;
@@ -26,25 +27,18 @@ public class StrollNearHomeGoal extends BehaviorGoalAdapter implements Listener 
     private boolean forceFinish;
     private final NPC npc;
     private final Random random = new Random();
-    private final int xrange;
-    private final int yrange;
 
     public StrollNearHomeGoal(NPC npc) {
-        this(npc, 10, 2);
-    }
-    public StrollNearHomeGoal(NPC npc, int xrange, int yrange) {
         this.npc = npc;
-        this.xrange = xrange;
-        this.yrange = yrange;
     }
 
-    private Location findRandomHomePosition(Location home) {
+    private Location findRandomHomePosition(Location home, int range) {
         Location found = null;
 
         for (int i = 0; i < 50; i++) {
-            int x = home.getBlockX() + random.nextInt(2 * xrange) - xrange;
-            int y = home.getBlockY() + random.nextInt(2 * yrange) - yrange;
-            int z = home.getBlockZ() + random.nextInt(2 * xrange) - xrange;
+            int x = home.getBlockX() + random.nextInt(2 * range) - range;
+            int y = home.getBlockY() + random.nextInt(2 * range) - range;
+            int z = home.getBlockZ() + random.nextInt(2 * range) - range;
             Block block = home.getWorld().getBlockAt(x, y, z);
             if (MinecraftBlockExaminer.validPosition(block)) {
                 found = block.getLocation();
@@ -81,18 +75,30 @@ public class StrollNearHomeGoal extends BehaviorGoalAdapter implements Listener 
 
         if(random.nextInt(200) != 0) return false;
 
-        if(!npc.data().has(BorderlessNPCPlugin.HOME_X_METADATA) ||
-                !npc.data().has(BorderlessNPCPlugin.HOME_Y_METADATA) ||
-                !npc.data().has(BorderlessNPCPlugin.HOME_Z_METADATA))
-            return false;
+        MetadataStore data = npc.data();
 
+        int range;
         Location npcLoc = npc.getEntity().getLocation();
-        Location home = new Location(npcLoc.getWorld(),
-                npc.data().get(BorderlessNPCPlugin.HOME_X_METADATA),
-                npc.data().get(BorderlessNPCPlugin.HOME_Y_METADATA),
-                npc.data().get(BorderlessNPCPlugin.HOME_Z_METADATA));
+        Location home;
 
-        Location dest = findRandomHomePosition(home);
+        if(data.has(BorderlessNPCPlugin.HOME_X_METADATA) &&
+                data.has(BorderlessNPCPlugin.HOME_Y_METADATA) &&
+                data.has(BorderlessNPCPlugin.HOME_Z_METADATA)) {
+            home = new Location(npcLoc.getWorld(),
+                    data.get(BorderlessNPCPlugin.HOME_X_METADATA),
+                    data.get(BorderlessNPCPlugin.HOME_Y_METADATA),
+                    data.get(BorderlessNPCPlugin.HOME_Z_METADATA));
+        } else {
+            home = npcLoc;
+        }
+
+        if(data.has(BorderlessNPCPlugin.TARGET_RANGE)) {
+            range = data.get(BorderlessNPCPlugin.TARGET_RANGE);
+        } else {
+            range = 10;
+        }
+
+        Location dest = findRandomHomePosition(home, range);
         if (dest == null)
             return false;
         npc.getNavigator().setTarget(dest);

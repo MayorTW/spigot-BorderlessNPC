@@ -57,7 +57,7 @@ public class ResidentTrait extends Trait {
 
         GoalController goalCtl = getNPC().getDefaultGoalController();
         goalCtl.addGoal(new GoHomeAtNightGoal(getNPC()), 2);
-        goalCtl.addGoal(new StrollNearHomeGoal(getNPC(), 10, 10), 1);
+        goalCtl.addGoal(new StrollNearHomeGoal(getNPC()), 1);
 
         NavigatorParameters navParm = getNPC().getNavigator().getLocalParameters();
         navParm.stuckAction((a, n) -> {return false;});

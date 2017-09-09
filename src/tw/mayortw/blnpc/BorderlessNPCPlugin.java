@@ -27,6 +27,7 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
     public static final String HOME_X_METADATA = "home_x";
     public static final String HOME_Y_METADATA = "home_y";
     public static final String HOME_Z_METADATA = "home_z";
+    public static final String TARGET_RANGE = "target_range";
 
     private Map<CommandSender, NPC> selectedNPCs = new HashMap<>();
 
@@ -65,6 +66,16 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
                     npc.data().remove(HOME_Y_METADATA);
                     npc.data().remove(HOME_Z_METADATA);
                     sender.sendMessage("Home point for " + npc.getName() + " cleared");
+                    return true;
+                case "setrange":
+                    if(args.length < 2)
+                        return false;
+                    try {
+                        npc.data().setPersistent(TARGET_RANGE, Integer.parseInt(args[1]));
+                        sender.sendMessage("Target range for " + npc.getName() + " set to " + args[1]);
+                    } catch (NumberFormatException exc) {
+                        sender.sendMessage(args[1] + " is not a valid number");
+                    }
                     return true;
             }
 

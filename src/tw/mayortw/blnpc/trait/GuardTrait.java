@@ -45,9 +45,13 @@ public class GuardTrait extends Trait {
 
         NavigatorParameters navParm = getNPC().getNavigator().getLocalParameters();
         navParm.stuckAction((a, n) -> {return false;});
+        navParm.attackStrategy((a, t) -> {
+            stationaryTicks = 0;
+            return false;
+        });
         navParm.addSingleUseCallback(cancelReason -> stationaryTicks = 0);
         navParm.stationaryTicks(100);
-        navParm.useNewPathfinder(true);
+        navParm.useNewPathfinder(false);
     }
 
     @Override

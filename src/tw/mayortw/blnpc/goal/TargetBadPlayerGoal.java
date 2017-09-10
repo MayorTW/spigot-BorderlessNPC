@@ -43,7 +43,6 @@ public class TargetBadPlayerGoal extends BehaviorGoalAdapter {
     public BehaviorStatus run() {
 
         if(target != null && !target.isPermissionSet(targetPerm)) {
-            target = null;
             npc.getNavigator().cancelNavigation();
         }
 
@@ -70,6 +69,9 @@ public class TargetBadPlayerGoal extends BehaviorGoalAdapter {
         }
 
         if (target != null && Util.canSeeTarget(npc, target)) {
+
+            if(npc.getNavigator().isNavigating())
+                npc.getDefaultGoalController().cancelCurrentExecution();
 
             npc.getNavigator().setTarget(target, aggressive);
             npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {

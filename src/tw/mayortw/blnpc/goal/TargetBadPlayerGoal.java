@@ -15,7 +15,7 @@ import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.entity.Entity;
 
-import tw.mayortw.blnpc.BorderlessNPCPlugin;
+import tw.mayortw.blnpc.util.Util;
 
 public class TargetBadPlayerGoal extends BehaviorGoalAdapter {
     private final boolean aggressive;
@@ -58,12 +58,7 @@ public class TargetBadPlayerGoal extends BehaviorGoalAdapter {
         if(targetPerm == null || !npc.isSpawned())
             return false;
 
-        int range;
-        if(npc.data().has(BorderlessNPCPlugin.TARGET_RANGE)) {
-            range = npc.data().get(BorderlessNPCPlugin.TARGET_RANGE);
-        } else {
-            range = 10;
-        }
+        double range = Util.getTargetRange(npc);
 
         Collection<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
         this.target = null;
@@ -73,7 +68,9 @@ public class TargetBadPlayerGoal extends BehaviorGoalAdapter {
                 break;
             }
         }
-        if (target != null) {
+
+        if (target != null && Util.canSeeTarget(npc, target)) {
+
             npc.getNavigator().setTarget(target, aggressive);
             npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
                 @Override

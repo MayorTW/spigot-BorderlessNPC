@@ -18,10 +18,9 @@ import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
-import net.citizensnpcs.api.npc.MetadataStore;
 import net.citizensnpcs.api.npc.NPC;
 
-import tw.mayortw.blnpc.BorderlessNPCPlugin;
+import tw.mayortw.blnpc.util.Util;
 
 public class StrollNearHomeGoal extends BehaviorGoalAdapter implements Listener {
     private boolean forceFinish;
@@ -75,28 +74,9 @@ public class StrollNearHomeGoal extends BehaviorGoalAdapter implements Listener 
 
         if(random.nextInt(200) != 0) return false;
 
-        MetadataStore data = npc.data();
-
-        int range;
         Location npcLoc = npc.getEntity().getLocation();
-        Location home;
-
-        if(data.has(BorderlessNPCPlugin.HOME_X_METADATA) &&
-                data.has(BorderlessNPCPlugin.HOME_Y_METADATA) &&
-                data.has(BorderlessNPCPlugin.HOME_Z_METADATA)) {
-            home = new Location(npcLoc.getWorld(),
-                    data.get(BorderlessNPCPlugin.HOME_X_METADATA),
-                    data.get(BorderlessNPCPlugin.HOME_Y_METADATA),
-                    data.get(BorderlessNPCPlugin.HOME_Z_METADATA));
-        } else {
-            home = npcLoc;
-        }
-
-        if(data.has(BorderlessNPCPlugin.TARGET_RANGE)) {
-            range = data.get(BorderlessNPCPlugin.TARGET_RANGE);
-        } else {
-            range = 10;
-        }
+        Location home = Util.getHomeLocation(npc);
+        int range = (int) Util.getTargetRange(npc);
 
         Location dest = findRandomHomePosition(home, range);
         if (dest == null)

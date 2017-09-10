@@ -12,6 +12,7 @@ import tw.mayortw.blnpc.BorderlessNPCPlugin;
 public class Util {
 
     public static final double DEFAULT_TARGET_RANGE = 10.0;
+    public static final int DEFAULT_ATTACK_DAMAGE = 1;
 
     public static Location getHomeLocation(NPC npc) {
 
@@ -33,6 +34,13 @@ public class Util {
             return npc.data().get(BorderlessNPCPlugin.TARGET_RANGE_METADATA);
         else
             return DEFAULT_TARGET_RANGE;
+    }
+
+    public static int getAttackDamage(NPC npc) {
+        if(npc.data().has(BorderlessNPCPlugin.ATTACK_DAMAGE_METADATA))
+            return npc.data().get(BorderlessNPCPlugin.ATTACK_DAMAGE_METADATA);
+        else
+            return DEFAULT_ATTACK_DAMAGE;
     }
 
     // Edited from net.citizensnpcs.trait.LookClose

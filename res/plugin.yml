@@ -7,7 +7,7 @@ depend:
     - Citizens
 commands:
     blnpc:
-        usage: "Usage: /<command> < sethome | clearhome | setrange <range> | clearrange >"
+        usage: "Usage: /<command> < sethome | clearhome | setrange <range> | clearrange | setdamage <damage> | cleardamage >"
         permission: blnpc.edit
 permissions:
     blnpc.edit:

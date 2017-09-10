@@ -9,27 +9,30 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.NPCDamageEntityEvent;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitInfo;
 
 import tw.mayortw.blnpc.trait.GuardTrait;
 import tw.mayortw.blnpc.trait.ResidentTrait;
+import tw.mayortw.blnpc.util.Util;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
 
-    public static final String HOME_X_METADATA = "home_x";
-    public static final String HOME_Y_METADATA = "home_y";
-    public static final String HOME_Z_METADATA = "home_z";
-    public static final String TARGET_RANGE_METADATA = "target_range";
+    public static final String HOME_X_METADATA = "blnpc_home_x";
+    public static final String HOME_Y_METADATA = "blnpc_home_y";
+    public static final String HOME_Z_METADATA = "blnpc_home_z";
+    public static final String TARGET_RANGE_METADATA = "blnpc_target_range";
+    public static final String ATTACK_DAMAGE_METADATA = "blnpc_attack_damage";
 
     private Map<CommandSender, NPC> selectedNPCs = new HashMap<>();
 
@@ -84,6 +87,20 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
                     npc.data().remove(TARGET_RANGE_METADATA);
                     sender.sendMessage("Target range for " + npc.getName() + " cleared");
                     return true;
+                case "setdamage":
+                    if(args.length < 2)
+                        return false;
+                    try {
+                        npc.data().setPersistent(ATTACK_DAMAGE_METADATA, Integer.parseInt(args[1]));
+                        sender.sendMessage("Attack damage for " + npc.getName() + " set to " + args[1]);
+                    } catch (NumberFormatException exc) {
+                        sender.sendMessage(args[1] + " is not a valid number");
+                    }
+                    return true;
+                case "cleardamage":
+                    npc.data().remove(ATTACK_DAMAGE_METADATA);
+                    sender.sendMessage("Attack damage for " + npc.getName() + " cleared");
+                    return true;
             }
 
         }
@@ -112,6 +129,17 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
 
                 selectedNPCs.remove(player);
                 eve.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onNPCDamageEntity(NPCDamageEntityEvent eve) {
+        NPC npc = eve.getNPC();
+        for(Trait trait : npc.getTraits()) {
+            if(trait.getClass() == GuardTrait.class) {
+                eve.setDamage(Util.getAttackDamage(npc));
+                break;
             }
         }
     }

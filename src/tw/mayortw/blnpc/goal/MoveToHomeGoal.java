@@ -47,16 +47,16 @@ public class MoveToHomeGoal extends BehaviorGoalAdapter {
 
         MetadataStore data = npc.data();
 
+        if(!data.has(BorderlessNPCPlugin.HOME_X_METADATA) ||
+                !data.has(BorderlessNPCPlugin.HOME_Y_METADATA) ||
+                !data.has(BorderlessNPCPlugin.HOME_Z_METADATA))
+            return false;
+
         Location npcLoc = npc.getEntity().getLocation();
         Location home = new Location(npcLoc.getWorld(),
                 data.get(BorderlessNPCPlugin.HOME_X_METADATA),
                 data.get(BorderlessNPCPlugin.HOME_Y_METADATA),
                 data.get(BorderlessNPCPlugin.HOME_Z_METADATA));
-
-        if(!data.has(BorderlessNPCPlugin.HOME_X_METADATA) ||
-                !data.has(BorderlessNPCPlugin.HOME_Y_METADATA) ||
-                !data.has(BorderlessNPCPlugin.HOME_Z_METADATA))
-            return false;
 
         if (npcLoc.getWorld() != home.getWorld() || npcLoc.distanceSquared(home) <= npc
                 .getNavigator().getLocalParameters().distanceMargin() + 1)

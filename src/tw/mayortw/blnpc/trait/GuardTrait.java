@@ -17,7 +17,8 @@ import net.citizensnpcs.trait.LookClose;
 import java.util.Random;
 
 import tw.mayortw.blnpc.BorderlessNPCPlugin;
-import tw.mayortw.blnpc.goal.StrollNearHomeGoal;
+import tw.mayortw.blnpc.goal.MoveToHomeGoal;
+import tw.mayortw.blnpc.goal.TargetBadPlayerGoal;
 
 public class GuardTrait extends Trait {
 
@@ -40,7 +41,8 @@ public class GuardTrait extends Trait {
         npc.setProtected(false);
 
         GoalController goalCtl = getNPC().getDefaultGoalController();
-        goalCtl.addGoal(new StrollNearHomeGoal(getNPC()), 1);
+        goalCtl.addGoal(new TargetBadPlayerGoal(getNPC(), "blnpc.bad", true), 2);
+        goalCtl.addGoal(new MoveToHomeGoal(getNPC()), 1);
 
         NavigatorParameters navParm = getNPC().getNavigator().getLocalParameters();
         navParm.stuckAction((a, n) -> {return false;});

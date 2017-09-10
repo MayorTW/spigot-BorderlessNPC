@@ -52,7 +52,6 @@ public class ResidentTrait extends Trait {
     public void onAttach() {
 
         npc.getTrait(LookClose.class).lookClose(true);
-        npc.setProtected(false);
 
         GoalController goalCtl = getNPC().getDefaultGoalController();
         goalCtl.addGoal(new GoHomeAtNightGoal(getNPC()), 2);

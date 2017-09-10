@@ -38,7 +38,6 @@ public class GuardTrait extends Trait {
     public void onAttach() {
 
         npc.getTrait(LookClose.class).lookClose(true);
-        npc.setProtected(false);
 
         GoalController goalCtl = getNPC().getDefaultGoalController();
         goalCtl.addGoal(new TargetBadPlayerGoal(getNPC(), "blnpc.bad", true), 2);

@@ -14,7 +14,6 @@ import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.permissions.Permissible;
 
 import tw.mayortw.blnpc.BorderlessNPCPlugin;
 
@@ -43,7 +42,7 @@ public class TargetBadPlayerGoal extends BehaviorGoalAdapter {
     @Override
     public BehaviorStatus run() {
 
-        if(target != null && !((Permissible) target).isPermissionSet(targetPerm)) {
+        if(target != null && !target.isPermissionSet(targetPerm)) {
             target = null;
             npc.getNavigator().cancelNavigation();
         }
@@ -69,8 +68,7 @@ public class TargetBadPlayerGoal extends BehaviorGoalAdapter {
         Collection<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
         this.target = null;
         for(Entity entity : nearby) {
-            if(entity instanceof Permissible &&
-                    ((Permissible) entity).isPermissionSet(targetPerm)) {
+            if(entity.isPermissionSet(targetPerm)) {
                 target = entity;
                 break;
             }

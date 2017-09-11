@@ -109,9 +109,9 @@ public class ShootBadPlayerGoal extends BehaviorGoalAdapter {
             Projectile arrow = (Projectile) shooter.getWorld().spawnArrow(
                     shtLoc.clone().add(shtLoc.getDirection().normalize()),
                     new Vector(tgtLoc.getX() - shtLoc.getX(),
-                        tgtLoc.getY() - shtLoc.getY() + distance / 120,
+                        tgtLoc.getY() - shtLoc.getY() + distance / 160,
                         tgtLoc.getZ() - shtLoc.getZ())
-                    .normalize(), 1.5f, 1);
+                    .normalize(), 2f, 1);
 
             arrow.setShooter(shooter);
 

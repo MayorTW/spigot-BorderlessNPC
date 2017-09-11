@@ -5,20 +5,25 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.projectiles.ProjectileSource;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDamageEntityEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitInfo;
 
+import tw.mayortw.blnpc.trait.ArcherTrait;
 import tw.mayortw.blnpc.trait.GuardTrait;
 import tw.mayortw.blnpc.trait.ResidentTrait;
 import tw.mayortw.blnpc.util.Util;
@@ -47,6 +52,7 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
 
         TraitFactory traitFact = CitizensAPI.getTraitFactory();
+        traitFact.registerTrait(TraitInfo.create(ArcherTrait.class).withName("archer"));
         traitFact.registerTrait(TraitInfo.create(GuardTrait.class).withName("guard"));
         traitFact.registerTrait(TraitInfo.create(ResidentTrait.class).withName("resident"));
     }
@@ -134,12 +140,25 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onNPCDamageEntity(NPCDamageEntityEvent eve) {
-        NPC npc = eve.getNPC();
-        for(Trait trait : npc.getTraits()) {
-            if(trait.getClass() == GuardTrait.class) {
-                eve.setDamage(Util.getAttackDamage(npc));
-                break;
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent eve) {
+        Entity damager = eve.getDamager();
+
+        if(damager instanceof Projectile) {
+            ProjectileSource shooter = ((Projectile) damager).getShooter();
+            if(shooter instanceof Entity) {
+                damager = (Entity) shooter;
+            }
+        }
+
+        NPCRegistry registry = CitizensAPI.getNPCRegistry();
+        if(registry.isNPC(damager)) {
+            NPC npc = registry.getNPC(damager);
+            for(Trait trait : npc.getTraits()) {
+                if(trait.getClass() == GuardTrait.class ||
+                        trait.getClass() == ArcherTrait.class) {
+                    eve.setDamage(Util.getAttackDamage(npc));
+                    break;
+                }
             }
         }
     }

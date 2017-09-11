@@ -13,7 +13,6 @@ import net.citizensnpcs.util.PlayerAnimation;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -78,6 +77,8 @@ public class ShootBadPlayerGoal extends BehaviorGoalAdapter {
                     <= range * range && //getNearbyEntities uses a box, but i'm using a circlw
                     Util.canSeeTarget(npc, entity)) {
                 target = entity;
+                useItem(npc.getEntity());
+                shootCoolDown = 15; //Time to animate
                 break;
             }
         }
@@ -98,23 +99,26 @@ public class ShootBadPlayerGoal extends BehaviorGoalAdapter {
 
         npc.faceLocation(target.getLocation()); //tgtLoc can be eye location
 
+        if(shootCoolDown == 15)
+            useItem(shooter);
+
         if(shootCoolDown <= 0) {
 
-            Projectile arrow = (Projectile) shooter.getWorld().spawnEntity(
-                    shtLoc.clone().add(shtLoc.getDirection().normalize()), EntityType.ARROW);
             double distance = shtLoc.distanceSquared(tgtLoc);
 
+            Projectile arrow = (Projectile) shooter.getWorld().spawnArrow(
+                    shtLoc.clone().add(shtLoc.getDirection().normalize()),
+                    new Vector(tgtLoc.getX() - shtLoc.getX(),
+                        tgtLoc.getY() - shtLoc.getY() + distance / 120,
+                        tgtLoc.getZ() - shtLoc.getZ())
+                    .normalize(), 1.5f, 1);
+
             arrow.setShooter(shooter);
-            arrow.setVelocity(new Vector(
-                        tgtLoc.getX() - shtLoc.getX(),
-                        tgtLoc.getY() - shtLoc.getY() + distance / 80,
-                        tgtLoc.getZ() - shtLoc.getZ()).normalize().multiply(1.5));
 
             shootCoolDown = SHOOT_CD;
         } else {
             shootCoolDown--;
         }
-        useItem(npc.getEntity());
     }
 
     public void useItem(Entity entity) {

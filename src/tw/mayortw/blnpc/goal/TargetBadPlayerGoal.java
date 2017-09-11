@@ -42,9 +42,11 @@ public class TargetBadPlayerGoal extends BehaviorGoalAdapter {
     @Override
     public BehaviorStatus run() {
 
+        double range = Util.getTargetRange(npc);
+
         if(target != null && !target.isPermissionSet(targetPerm) ||
                 target.getLocation().distanceSquared(Util.getHomeLocation(npc))
-                    > Math.pow(Util.getTargetRange(npc), 2)) {
+                    > range * range) {
             npc.getNavigator().cancelNavigation();
         }
 
@@ -72,7 +74,7 @@ public class TargetBadPlayerGoal extends BehaviorGoalAdapter {
 
         if (target != null && Util.canSeeTarget(npc, target) &&
                 target.getLocation().distanceSquared(Util.getHomeLocation(npc))
-                    < Math.pow(Util.getTargetRange(npc), 2)) {
+                    < range * range) {
 
             if(npc.getNavigator().isNavigating())
                 npc.getDefaultGoalController().cancelCurrentExecution();

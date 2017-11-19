@@ -27,6 +27,8 @@ import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.util.PlayerAnimation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
@@ -136,75 +138,88 @@ public class ResidentTrait extends Trait {
 
     private static class DoorOpener implements PathCallback {
 
-        private Block doorBlock;
-        private Door door;
-        private NPC npc;
+        private List<DoorChecker> doorCheckers = new ArrayList<>();
 
-        private BukkitRunnable doorChecker = new BukkitRunnable() {
+        @Override
+        public void run(NPC npc, Block point, ListIterator<Block> path) {
+            BlockState state = point.getState();
+            Door door = (Door) state.getData();
+            if (npc.getStoredLocation().distance(point.getLocation()) < 2) {
+                DoorChecker doorChecker = new DoorChecker(npc, point, door);
+                if(!doorCheckers.contains(doorChecker)) {
+                    doorChecker.runTaskTimer(BorderlessNPCPlugin.getPlugin(BorderlessNPCPlugin.class), 5, 10);
+                    doorCheckers.add(doorChecker);
+                }
+            }
+        }
+
+        private class DoorChecker extends BukkitRunnable {
+
+            private Block point;
+            private Door door;
+            private NPC npc;
+
+            DoorChecker(NPC npc, Block point, Door door) {
+                this.npc = npc;
+                this.point = point;
+                this.door = door;
+            }
 
             @Override
             public void run() {
-                if(doorBlock != null && door != null && npc != null) {
+                if(point != null && door != null && npc != null ) {
 
-                    double distance = npc.getStoredLocation().distance(doorBlock.getLocation());
+                    double distance = npc.getStoredLocation().distance(point.getLocation());
 
-                    if(distance > 2) {
+                    if(distance > 2 || !npc.isSpawned() || !npc.getNavigator().isNavigating()) {
                         openDoor(false);
-                        this.cancel();
+                        cancel();
                     } else {
                         openDoor(true);
                     }
 
                 } else {
-                    this.cancel();
+                    cancel();
                 }
             }
-        };
 
-        @Override
-        public void run(NPC npc, Block point, ListIterator<Block> path) {
-            BlockState state = point.getState();
-            door = (Door) state.getData();
-            boolean bottom = !door.isTopHalf();
-
-            doorBlock = bottom ? point : point.getRelative(BlockFace.DOWN);
-            state = doorBlock.getState();
-            door = (Door) state.getData();
-
-            this.npc = npc;
-
-            try {
-                doorChecker.getTaskId();
-            } catch(IllegalStateException exc) {
-
-                npc.getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
-                    openDoor(false);
-                    doorChecker.cancel();
-                });
-
-                doorChecker.runTaskTimer(BorderlessNPCPlugin.getPlugin(BorderlessNPCPlugin.class), 5, 10);
-            }
-        }
-
-        private void swingArm(Entity entity) {
-            if (entity instanceof Player) {
-                PlayerAnimation.ARM_SWING.play((Player) entity);
-            }
-        }
-
-        private void openDoor(boolean open) {
-            BlockState state = doorBlock.getState();
-
-            if(door.isOpen() != open) {
-                doorBlock.getWorld().playSound(doorBlock.getLocation(),
-                        open ? Sound.BLOCK_WOODEN_DOOR_OPEN : Sound.BLOCK_WOODEN_DOOR_CLOSE,
-                        .8f, 1);
-                swingArm(npc.getEntity());
+            private void swingArm(Entity entity) {
+                if (entity instanceof Player) {
+                    PlayerAnimation.ARM_SWING.play((Player) entity);
+                }
             }
 
-            door.setOpen(open);
-            state.setData(door);
-            state.update();
+            private void openDoor(boolean open) {
+                if(door.isOpen() != open) {
+                    point.getWorld().playSound(point.getLocation(),
+                            open ? Sound.BLOCK_WOODEN_DOOR_OPEN : Sound.BLOCK_WOODEN_DOOR_CLOSE,
+                            .8f, 1);
+                    swingArm(npc.getEntity());
+                }
+
+                boolean bottom = !door.isTopHalf();
+                Block set = bottom ? point : point.getRelative(BlockFace.DOWN);
+                BlockState state = set.getState();
+                door = (Door) state.getData();
+                door.setOpen(open);
+                state.setData(door);
+                state.update();
+            }
+
+            @Override
+            public void cancel() {
+                super.cancel();
+                doorCheckers.remove(this);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if(o instanceof DoorChecker) {
+                    DoorChecker other = (DoorChecker) o;
+                    return other.npc.equals(this.npc) && other.point.equals(this.point);
+                }
+                return false;
+            }
         }
     }
 }

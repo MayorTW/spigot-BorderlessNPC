@@ -52,6 +52,8 @@ public class GuardTrait extends Trait {
         navParm.addSingleUseCallback(cancelReason -> stationaryTicks = 0);
         navParm.stationaryTicks(100);
         navParm.useNewPathfinder(false);
+
+        npc.data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, false);
     }
 
     @Override

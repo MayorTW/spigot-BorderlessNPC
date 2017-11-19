@@ -45,6 +45,8 @@ public class ArcherTrait extends Trait {
         NavigatorParameters navParm = getNPC().getNavigator().getLocalParameters();
         navParm.stationaryTicks(100);
         navParm.useNewPathfinder(true);
+
+        npc.data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, false);
     }
 
     @Override

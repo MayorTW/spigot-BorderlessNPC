@@ -66,6 +66,8 @@ public class ResidentTrait extends Trait {
         navParm.stationaryTicks(100);
         navParm.distanceMargin(1.5);
         navParm.useNewPathfinder(true);
+
+        npc.data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, false);
     }
 
     @Override

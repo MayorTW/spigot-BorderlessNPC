@@ -9,6 +9,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -158,6 +159,23 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
                         trait.getClass() == ArcherTrait.class) {
                     eve.setDamage(Util.getAttackDamage(npc));
                     break;
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent eve) {
+        Entity entity = eve.getEntity();
+
+        NPCRegistry registry = CitizensAPI.getNPCRegistry();
+        if(registry.isNPC(entity)) {
+            NPC npc = registry.getNPC(entity);
+            for(Trait trait : npc.getTraits()) {
+                if(trait instanceof ArcherTrait ||
+                   trait instanceof GuardTrait ||
+                   trait instanceof ResidentTrait) {
+                    eve.setCancelled(true);
                 }
             }
         }

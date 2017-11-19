@@ -1,6 +1,6 @@
 name: "BorderlessNPC"
 main: tw.mayortw.blnpc.BorderlessNPCPlugin
-version: 0.5
+version: 0.5.1
 description: "無序NPC"
 author: "R26"
 depend:

@@ -72,6 +72,9 @@ public class ShootTargetGoal extends BehaviorGoalAdapter {
         this.target = null;
         for (Entity entity : nearby) {
             if(TargetRule.isTarget(entity) &&
+                    (target == null ||
+                    entity.getLocation().distanceSquared(npc.getStoredLocation()) <
+                    target.getLocation().distanceSquared(npc.getStoredLocation())) &&
                     entity.getLocation().distanceSquared(Util.getHomeLocation(npc))
                     <= range * range && //getNearbyEntities uses a box, but i'm using a circle
                     Util.canSeeTarget(npc, entity)) {

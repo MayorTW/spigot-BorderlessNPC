@@ -49,7 +49,7 @@ public class AttackTargetGoal extends BehaviorGoalAdapter {
         if(target != null && !TargetRule.isTarget(target) ||
                 target.getLocation().distanceSquared(Util.getHomeLocation(npc))
                     > range * range) {
-            npc.getNavigator().cancelNavigation();
+            finished = true;
         }
 
         if (finished) {
@@ -68,9 +68,11 @@ public class AttackTargetGoal extends BehaviorGoalAdapter {
         Collection<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
         this.target = null;
         for(Entity entity : nearby) {
-            if(TargetRule.isTarget(entity)) {
+            if(TargetRule.isTarget(entity) &&
+                    (target == null ||
+                    entity.getLocation().distanceSquared(npc.getStoredLocation()) <
+                    target.getLocation().distanceSquared(npc.getStoredLocation()))) {
                 target = entity;
-                break;
             }
         }
 

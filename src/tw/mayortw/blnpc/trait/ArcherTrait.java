@@ -18,7 +18,7 @@ import java.util.Random;
 
 import tw.mayortw.blnpc.BorderlessNPCPlugin;
 import tw.mayortw.blnpc.goal.MoveToHomeGoal;
-import tw.mayortw.blnpc.goal.ShootBadPlayerGoal;
+import tw.mayortw.blnpc.goal.ShootTargetGoal;
 
 public class ArcherTrait extends Trait {
 
@@ -39,7 +39,7 @@ public class ArcherTrait extends Trait {
         npc.getTrait(LookClose.class).lookClose(true);
 
         GoalController goalCtl = getNPC().getDefaultGoalController();
-        goalCtl.addGoal(new ShootBadPlayerGoal(getNPC(), "blnpc.bad"), 2);
+        goalCtl.addGoal(new ShootTargetGoal(getNPC()), 2);
         goalCtl.addGoal(new MoveToHomeGoal(getNPC()), 1);
 
         NavigatorParameters navParm = getNPC().getNavigator().getLocalParameters();

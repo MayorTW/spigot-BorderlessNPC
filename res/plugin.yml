@@ -9,6 +9,9 @@ commands:
     blnpc:
         usage: "Usage: /<command> < sethome | clearhome | setrange <range> | clearrange | setdamage <damage> | cleardamage >"
         permission: blnpc.edit
+    bltgt:
+        usage: "Usage: /<command> < addtarget | deltarget | addexclude | delexclude | listtarget | listexclude >"
+        permission: blnpc.edit
 permissions:
     blnpc.edit:
         default: op

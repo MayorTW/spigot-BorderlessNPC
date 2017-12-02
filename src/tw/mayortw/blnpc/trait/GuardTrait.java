@@ -18,7 +18,7 @@ import java.util.Random;
 
 import tw.mayortw.blnpc.BorderlessNPCPlugin;
 import tw.mayortw.blnpc.goal.MoveToHomeGoal;
-import tw.mayortw.blnpc.goal.TargetBadPlayerGoal;
+import tw.mayortw.blnpc.goal.AttackTargetGoal;
 
 public class GuardTrait extends Trait {
 
@@ -40,7 +40,7 @@ public class GuardTrait extends Trait {
         npc.getTrait(LookClose.class).lookClose(true);
 
         GoalController goalCtl = getNPC().getDefaultGoalController();
-        goalCtl.addGoal(new TargetBadPlayerGoal(getNPC(), "blnpc.bad", true), 2);
+        goalCtl.addGoal(new AttackTargetGoal(getNPC(), true), 2);
         goalCtl.addGoal(new MoveToHomeGoal(getNPC()), 1);
 
         NavigatorParameters navParm = getNPC().getNavigator().getLocalParameters();

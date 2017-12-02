@@ -27,6 +27,7 @@ import net.citizensnpcs.api.trait.TraitInfo;
 import tw.mayortw.blnpc.trait.ArcherTrait;
 import tw.mayortw.blnpc.trait.GuardTrait;
 import tw.mayortw.blnpc.trait.ResidentTrait;
+import tw.mayortw.blnpc.util.TargetRule;
 import tw.mayortw.blnpc.util.Util;
 
 import java.util.HashMap;
@@ -50,12 +51,19 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
             return;
         }
 
+        TargetRule.loadConfig(getConfig());
+
         getServer().getPluginManager().registerEvents(this, this);
 
         TraitFactory traitFact = CitizensAPI.getTraitFactory();
         traitFact.registerTrait(TraitInfo.create(ArcherTrait.class).withName("archer"));
         traitFact.registerTrait(TraitInfo.create(GuardTrait.class).withName("guard"));
         traitFact.registerTrait(TraitInfo.create(ResidentTrait.class).withName("resident"));
+    }
+
+    @Override
+    public void onDisable() {
+        saveConfig();
     }
 
     @Override
@@ -110,6 +118,49 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
                     return true;
             }
 
+        } else if(cmd.getName().equalsIgnoreCase("bltgt") && args.length > 0) {
+            switch(args[0].toLowerCase()) {
+                case "addtarget":
+                    if(args.length < 2)
+                        return false;
+                    if(!TargetRule.addTarget(args[1]))
+                        sender.sendMessage(args[1] + " is invalid");
+                    else
+                        sender.sendMessage(args[1] + " added to target list");
+                    return true;
+                case "addexclude":
+                    if(args.length < 2)
+                        return false;
+                    if(!TargetRule.addExclude(args[1]))
+                        sender.sendMessage(args[1] + " is invalid");
+                    else
+                        sender.sendMessage(args[1] + " added to exclude list");
+                    return true;
+                case "deltarget":
+                    if(args.length < 2)
+                        return false;
+                    if(!TargetRule.delTarget(args[1]))
+                        sender.sendMessage(args[1] + " not exist");
+                    else
+                        sender.sendMessage(args[1] + " removed from target list");
+                    return true;
+                case "delexclude":
+                    if(args.length < 2)
+                        return false;
+                    if(!TargetRule.delExclude(args[1]))
+                        sender.sendMessage(args[1] + " not exist");
+                    else
+                        sender.sendMessage(args[1] + " removed from exclude list");
+                    return true;
+                case "listtarget":
+                    sender.sendMessage("List of targets: " + TargetRule.getTargets().toString());
+                    return true;
+                case "listexclude":
+                    sender.sendMessage("List of excludes: " + TargetRule.getExcludes().toString());
+                    return true;
+                default:
+                    return false;
+            }
         }
         return false;
     }

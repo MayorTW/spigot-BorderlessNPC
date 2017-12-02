@@ -15,19 +15,21 @@ import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.entity.Entity;
 
+import tw.mayortw.blnpc.util.TargetRule;
 import tw.mayortw.blnpc.util.Util;
 
-public class TargetBadPlayerGoal extends BehaviorGoalAdapter {
+public class AttackTargetGoal extends BehaviorGoalAdapter {
+
     private final boolean aggressive;
     private boolean finished;
     private final NPC npc;
     private CancelReason reason;
     private Entity target;
-    private String targetPerm;
+    private TargetRule TargetRule;
 
-    public TargetBadPlayerGoal(NPC npc, String targetPerm, boolean aggressive) {
+    public AttackTargetGoal(NPC npc, boolean aggressive) {
         this.npc = npc;
-        this.targetPerm = targetPerm;
+        this.TargetRule = TargetRule;
         this.aggressive = aggressive;
     }
 
@@ -44,7 +46,7 @@ public class TargetBadPlayerGoal extends BehaviorGoalAdapter {
 
         double range = Util.getTargetRange(npc);
 
-        if(target != null && !target.isPermissionSet(targetPerm) ||
+        if(target != null && !TargetRule.isTarget(target) ||
                 target.getLocation().distanceSquared(Util.getHomeLocation(npc))
                     > range * range) {
             npc.getNavigator().cancelNavigation();
@@ -58,7 +60,7 @@ public class TargetBadPlayerGoal extends BehaviorGoalAdapter {
 
     @Override
     public boolean shouldExecute() {
-        if(targetPerm == null || !npc.isSpawned())
+        if(!npc.isSpawned())
             return false;
 
         double range = Util.getTargetRange(npc);
@@ -66,7 +68,7 @@ public class TargetBadPlayerGoal extends BehaviorGoalAdapter {
         Collection<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
         this.target = null;
         for(Entity entity : nearby) {
-            if(entity.isPermissionSet(targetPerm)) {
+            if(TargetRule.isTarget(entity)) {
                 target = entity;
                 break;
             }

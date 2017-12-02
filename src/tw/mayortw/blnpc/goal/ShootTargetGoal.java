@@ -18,22 +18,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.util.Vector;
 
+import tw.mayortw.blnpc.util.TargetRule;
 import tw.mayortw.blnpc.util.Util;
 
-public class ShootBadPlayerGoal extends BehaviorGoalAdapter {
+public class ShootTargetGoal extends BehaviorGoalAdapter {
 
     private final static int SHOOT_CD = 60;
 
     private boolean finished;
     private final NPC npc;
     private Entity target;
-    private String targetPerm;
 
     private int shootCoolDown;
 
-    public ShootBadPlayerGoal(NPC npc, String targetPerm) {
+    public ShootTargetGoal(NPC npc) {
         this.npc = npc;
-        this.targetPerm = targetPerm;
     }
 
     @Override
@@ -47,7 +46,7 @@ public class ShootBadPlayerGoal extends BehaviorGoalAdapter {
 
         double range = Util.getTargetRange(npc);
 
-        if(target != null && !target.isPermissionSet(targetPerm) ||
+        if(target != null && !TargetRule.isTarget(target) ||
                 target.getLocation().distanceSquared(Util.getHomeLocation(npc))
                     > range * range || target.isDead() ||
                     !Util.canSeeTarget(npc, target)) {
@@ -72,9 +71,9 @@ public class ShootBadPlayerGoal extends BehaviorGoalAdapter {
 
         this.target = null;
         for (Entity entity : nearby) {
-            if(entity.isPermissionSet(targetPerm) &&
+            if(TargetRule.isTarget(entity) &&
                     entity.getLocation().distanceSquared(Util.getHomeLocation(npc))
-                    <= range * range && //getNearbyEntities uses a box, but i'm using a circlw
+                    <= range * range && //getNearbyEntities uses a box, but i'm using a circle
                     Util.canSeeTarget(npc, entity)) {
                 target = entity;
                 useItem(npc.getEntity());

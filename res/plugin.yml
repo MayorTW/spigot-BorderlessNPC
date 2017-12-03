@@ -10,7 +10,9 @@ commands:
         usage: "Usage: /<command> < sethome | clearhome | setrange <range> | clearrange | setdamage <damage> | cleardamage >"
         permission: blnpc.edit
     bltgt:
-        usage: "Usage: /<command> < addtarget | deltarget | addexclude | delexclude | listtarget | listexclude >"
+        usage: |
+            Usage: /<command> < addtarget <rule> | deltarget <rule> | addexclude <rule> | delexclude <rule> | listtarget | listexclude >
+            Where <rule> can be type:<entity_type>, name:<entity_name>, or perm:<permission>
         permission: blnpc.edit
 permissions:
     blnpc.edit:

@@ -91,7 +91,7 @@ public class TargetRule {
     }
 
     public static List<String> getTargets() {
-        List targets = new ArrayList<>();
+        List<String> targets = new ArrayList<>();
         ConfigurationSection rules = (ConfigurationSection) config.get(TARGET_PATH);
 
         if(rules != null) {
@@ -103,7 +103,7 @@ public class TargetRule {
     }
 
     public static List<String> getExcludes() {
-        List excludes = new ArrayList<>();
+        List<String> excludes = new ArrayList<>();
         ConfigurationSection rules = (ConfigurationSection) config.get(EXCLUDE_PATH);
 
         if(rules != null) {

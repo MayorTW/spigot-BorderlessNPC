@@ -2,7 +2,6 @@ package tw.mayortw.blnpc.trait;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 
 import net.citizensnpcs.api.ai.GoalController;
@@ -51,7 +50,7 @@ public class GuardTrait extends Trait {
         });
         navParm.addSingleUseCallback(cancelReason -> stationaryTicks = 0);
         navParm.stationaryTicks(100);
-        navParm.useNewPathfinder(false);
+        navParm.useNewPathfinder(true);
 
         npc.data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, false);
     }

@@ -2,14 +2,10 @@ package tw.mayortw.blnpc.trait;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 
 import net.citizensnpcs.api.ai.GoalController;
-import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.NavigatorParameters;
-import net.citizensnpcs.api.ai.StuckAction;
-import net.citizensnpcs.api.ai.event.NavigationStuckEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.trait.LookClose;

@@ -12,6 +12,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.PlayerAnimation;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -113,7 +114,8 @@ public class ShootTargetGoal extends BehaviorGoalAdapter {
             double z = tgtLoc.getZ() - shtLoc.getZ();
 
             shooter.launchProjectile(org.bukkit.entity.Arrow.class,
-                    new Vector(x, y + Math.sqrt(x*x + z*z) * 0.20000000298023224, z).normalize());
+                    new Vector(x, y + Math.sqrt(x*x + z*z) * 0.20000000298023224, z).normalize())
+                .setPickupStatus(Arrow.PickupStatus.DISALLOWED);
 
             shootCoolDown = SHOOT_CD;
         } else {

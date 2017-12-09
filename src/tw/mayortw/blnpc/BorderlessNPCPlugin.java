@@ -30,6 +30,7 @@ import tw.mayortw.blnpc.trait.ResidentTrait;
 import tw.mayortw.blnpc.util.TargetRule;
 import tw.mayortw.blnpc.util.Util;
 
+import java.time.DateTimeException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -136,18 +137,26 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
                 case "addtarget":
                     if(args.length < 2)
                         return false;
-                    if(!targetRule.addTarget(args[1], dura))
-                        sender.sendMessage(args[1] + " is invalid");
-                    else
-                        sender.sendMessage(args[1] + " added to target list");
+                    try {
+                        if(!targetRule.addTarget(args[1], dura))
+                            sender.sendMessage(args[1] + " is invalid");
+                        else
+                            sender.sendMessage(args[1] + " added to target list");
+                    } catch(DateTimeException exc) {
+                        sender.sendMessage("Error: " + exc.getMessage());
+                    }
                     return true;
                 case "addexclude":
                     if(args.length < 2)
                         return false;
-                    if(!targetRule.addExclude(args[1], dura))
-                        sender.sendMessage(args[1] + " is invalid");
-                    else
-                        sender.sendMessage(args[1] + " added to exclude list");
+                    try {
+                        if(!targetRule.addExclude(args[1], dura))
+                            sender.sendMessage(args[1] + " is invalid");
+                        else
+                            sender.sendMessage(args[1] + " added to exclude list");
+                    } catch(DateTimeException exc) {
+                        sender.sendMessage("Error: " + exc.getMessage());
+                    }
                     return true;
                 case "deltarget":
                     if(args.length < 2)
@@ -245,32 +254,37 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
         }
     }
 
+    // Return null if invalid
     private Duration getDuration(String time) {
         Duration dura = Duration.ofSeconds(0l);
-        if(time.matches("^([+-]{0,1}\\d+[YMdhms])+$")) {
+        if(time.matches("^(\\d+[YMdhms])+$")) {
             for(String field : time.split("(?<=[YMdhms])")) {
-                char unit = field.charAt(field.length() - 1);
-                long value = Long.parseLong(field.substring(0, field.length() - 1));
+                try {
+                    char unit = field.charAt(field.length() - 1);
+                    long value = Long.parseLong(field.substring(0, field.length() - 1));
 
-                switch(unit) {
-                    case 'Y':
-                        dura = dura.plusDays(value * 365l);
-                        break;
-                    case 'M':
-                        dura = dura.plusDays(value * 30);
-                        break;
-                    case 'd':
-                        dura = dura.plusDays(value);
-                        break;
-                    case 'h':
-                        dura = dura.plusHours(value);
-                        break;
-                    case 'm':
-                        dura = dura.plusMinutes(value);
-                        break;
-                    case 's':
-                        dura = dura.plusSeconds(value);
-                        break;
+                    switch(unit) {
+                        case 'Y':
+                            dura = dura.plusDays(Math.multiplyExact(value, 365l));
+                            break;
+                        case 'M':
+                            dura = dura.plusDays(Math.multiplyExact(value, 30l));
+                            break;
+                        case 'd':
+                            dura = dura.plusDays(value);
+                            break;
+                        case 'h':
+                            dura = dura.plusHours(value);
+                            break;
+                        case 'm':
+                            dura = dura.plusMinutes(value);
+                            break;
+                        case 's':
+                            dura = dura.plusSeconds(value);
+                            break;
+                    }
+                } catch(NumberFormatException  | ArithmeticException e) {
+                    return null;
                 }
             }
         } else {

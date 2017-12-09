@@ -60,14 +60,20 @@ public class TargetRule {
     // dura can be null
     public boolean addTarget(String rule, Duration dura) {
         String[] t = rule.split(":");
-        if(Rule.isValidRule(t[0], t[1])) {
+        if(t.length >= 2 && Rule.isValidRule(t[0], t[1])) {
+
+            LocalDateTime until = null;
+            if(dura != null) {
+                until = LocalDateTime.now().plus(dura);
+            }
+
             ConfigurationSection section =
                 config.createSection(TARGET_PATH + "." + rule.replaceAll("[\\.:]", "_"));
 
             section.set(TYPE_PATH, t[0]);
             section.set(RULE_PATH, t[1]);
-            section.set(DURA_PATH, dura == null ? null :
-                    LocalDateTime.now().plus(dura).toString());
+            section.set(DURA_PATH, until == null ? null : until.toString());
+
             return true;
         }
         return false;
@@ -77,14 +83,20 @@ public class TargetRule {
     // dura can be null
     public boolean addExclude(String rule, Duration dura) {
         String[] t = rule.split(":");
-        if(Rule.isValidRule(t[0], t[1])) {
+        if(t.length >= 2 && Rule.isValidRule(t[0], t[1])) {
+
+            LocalDateTime until = null;
+            if(dura != null) {
+                until = LocalDateTime.now().plus(dura);
+            }
+
             ConfigurationSection section =
                 config.createSection(EXCLUDE_PATH + "." + rule.replaceAll("[\\.:]", "_"));
 
             section.set(TYPE_PATH, t[0]);
             section.set(RULE_PATH, t[1]);
-            section.set(DURA_PATH, dura == null ? null :
-                    LocalDateTime.now().plus(dura).toString());
+            section.set(DURA_PATH, until == null ? null : until.toString());
+
             return true;
         }
         return false;
@@ -118,7 +130,7 @@ public class TargetRule {
             for(String key : rules.getKeys(false)) {
                 targets.add(
                         rules.getString(key + "." + TYPE_PATH) + ":" +
-                        rules.getString(key + "." + RULE_PATH) + " until " +
+                        rules.getString(key + "." + RULE_PATH) + " until:" +
                         rules.getString(key + "." + DURA_PATH));
             }
         }
@@ -133,7 +145,7 @@ public class TargetRule {
             for(String key : rules.getKeys(false)) {
                 excludes.add(
                         rules.getString(key + "." + TYPE_PATH) + ":" +
-                        rules.getString(key + "." + RULE_PATH) + " until " +
+                        rules.getString(key + "." + RULE_PATH) + " until:" +
                         rules.getString(key + "." + DURA_PATH));
             }
         }
@@ -189,7 +201,7 @@ public class TargetRule {
     }
 
     // Return true when time has not been reached or time is null
-    private boolean checkTime(String time) throws DateTimeException {
+    private boolean checkTime(String time) {
 
         if(time == null)
             return true;

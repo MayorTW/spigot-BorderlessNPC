@@ -30,6 +30,7 @@ import tw.mayortw.blnpc.trait.ResidentTrait;
 import tw.mayortw.blnpc.util.TargetRule;
 import tw.mayortw.blnpc.util.Util;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,11 +48,11 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         if(getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {
             getLogger().log(java.util.logging.Level.SEVERE, "Citizens 2.0 not found or not enabled");
-            getServer().getPluginManager().disablePlugin(this); 
+            getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        TargetRule.loadConfig(getConfig());
+        TargetRule.init(getConfig());
 
         getServer().getPluginManager().registerEvents(this, this);
 
@@ -119,11 +120,23 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
             }
 
         } else if(cmd.getName().equalsIgnoreCase("bltgt") && args.length > 0) {
+            TargetRule targetRule = TargetRule.getInstance();
+            Duration dura = null;
+
+            if(args.length > 2) {
+                dura = getDuration(args[2]);
+                if(dura == null) {
+                    sender.sendMessage(args[2] + " is invalid");
+                    return true;
+                }
+            }
+
+            boolean success;
             switch(args[0].toLowerCase()) {
                 case "addtarget":
                     if(args.length < 2)
                         return false;
-                    if(!TargetRule.addTarget(args[1]))
+                    if(!targetRule.addTarget(args[1], dura))
                         sender.sendMessage(args[1] + " is invalid");
                     else
                         sender.sendMessage(args[1] + " added to target list");
@@ -131,7 +144,7 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
                 case "addexclude":
                     if(args.length < 2)
                         return false;
-                    if(!TargetRule.addExclude(args[1]))
+                    if(!targetRule.addExclude(args[1], dura))
                         sender.sendMessage(args[1] + " is invalid");
                     else
                         sender.sendMessage(args[1] + " added to exclude list");
@@ -139,7 +152,7 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
                 case "deltarget":
                     if(args.length < 2)
                         return false;
-                    if(!TargetRule.delTarget(args[1]))
+                    if(!targetRule.delTarget(args[1]))
                         sender.sendMessage(args[1] + " not exist");
                     else
                         sender.sendMessage(args[1] + " removed from target list");
@@ -147,16 +160,16 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
                 case "delexclude":
                     if(args.length < 2)
                         return false;
-                    if(!TargetRule.delExclude(args[1]))
+                    if(!targetRule.delExclude(args[1]))
                         sender.sendMessage(args[1] + " not exist");
                     else
                         sender.sendMessage(args[1] + " removed from exclude list");
                     return true;
                 case "listtarget":
-                    sender.sendMessage("List of targets: " + TargetRule.getTargets().toString());
+                    sender.sendMessage("List of targets: " + targetRule.getTargets().toString());
                     return true;
                 case "listexclude":
-                    sender.sendMessage("List of excludes: " + TargetRule.getExcludes().toString());
+                    sender.sendMessage("List of excludes: " + targetRule.getExcludes().toString());
                     return true;
                 default:
                     return false;
@@ -230,5 +243,39 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
                 }
             }
         }
+    }
+
+    private Duration getDuration(String time) {
+        Duration dura = Duration.ofSeconds(0l);
+        if(time.matches("^([+-]{0,1}\\d+[YMdhms])+$")) {
+            for(String field : time.split("(?<=[YMdhms])")) {
+                char unit = field.charAt(field.length() - 1);
+                long value = Long.parseLong(field.substring(0, field.length() - 1));
+
+                switch(unit) {
+                    case 'Y':
+                        dura = dura.plusDays(value * 365l);
+                        break;
+                    case 'M':
+                        dura = dura.plusDays(value * 30);
+                        break;
+                    case 'd':
+                        dura = dura.plusDays(value);
+                        break;
+                    case 'h':
+                        dura = dura.plusHours(value);
+                        break;
+                    case 'm':
+                        dura = dura.plusMinutes(value);
+                        break;
+                    case 's':
+                        dura = dura.plusSeconds(value);
+                        break;
+                }
+            }
+        } else {
+            return null;
+        }
+        return dura;
     }
 }

@@ -1,6 +1,6 @@
 package tw.mayortw.blnpc.goal;
 
-/* 
+/*
  * Edited from net.citizensnpcs.api.ai.goals.TargetNearbyEntityGoal
  */
 
@@ -46,7 +46,7 @@ public class ShootTargetGoal extends BehaviorGoalAdapter {
 
         double range = Util.getTargetRange(npc);
 
-        if(target != null && !TargetRule.isTarget(target) ||
+        if(target != null && !TargetRule.getInstance().isTarget(target) ||
                 target.getLocation().distanceSquared(Util.getHomeLocation(npc))
                     > range * range || target.isDead() ||
                     !Util.canSeeTarget(npc, target)) {
@@ -71,7 +71,7 @@ public class ShootTargetGoal extends BehaviorGoalAdapter {
 
         this.target = null;
         for (Entity entity : nearby) {
-            if(TargetRule.isTarget(entity) &&
+            if(TargetRule.getInstance().isTarget(entity) &&
                     (target == null ||
                     entity.getLocation().distanceSquared(npc.getStoredLocation()) <
                     target.getLocation().distanceSquared(npc.getStoredLocation())) &&

@@ -5,6 +5,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
 
+import java.time.DateTimeException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,15 +38,27 @@ public class TargetRule {
     private static final String EXCLUDE_PATH = "exclude";
     private static final String TYPE_PATH = "type";
     private static final String RULE_PATH = "rule";
+    private static final String DURA_PATH = "until";
 
-    private static ConfigurationSection config;
+    private static TargetRule instance;
 
-    public static void loadConfig(ConfigurationSection config) {
-        TargetRule.config = config;
+    private ConfigurationSection config;
+
+    private TargetRule(ConfigurationSection config) {
+        this.config = config;
+    }
+
+    public static void init(ConfigurationSection config) {
+        instance = new TargetRule(config);
+    }
+
+    public static TargetRule getInstance() {
+        return instance;
     }
 
     // Return true on sucess
-    public static boolean addTarget(String rule) {
+    // dura can be null
+    public boolean addTarget(String rule, Duration dura) {
         String[] t = rule.split(":");
         if(Rule.isValidRule(t[0], t[1])) {
             ConfigurationSection section =
@@ -51,13 +66,16 @@ public class TargetRule {
 
             section.set(TYPE_PATH, t[0]);
             section.set(RULE_PATH, t[1]);
+            section.set(DURA_PATH, dura == null ? null :
+                    LocalDateTime.now().plus(dura).toString());
             return true;
         }
         return false;
     }
 
     // Return true on sucess
-    public static boolean addExclude(String rule) {
+    // dura can be null
+    public boolean addExclude(String rule, Duration dura) {
         String[] t = rule.split(":");
         if(Rule.isValidRule(t[0], t[1])) {
             ConfigurationSection section =
@@ -65,13 +83,15 @@ public class TargetRule {
 
             section.set(TYPE_PATH, t[0]);
             section.set(RULE_PATH, t[1]);
+            section.set(DURA_PATH, dura == null ? null :
+                    LocalDateTime.now().plus(dura).toString());
             return true;
         }
         return false;
     }
 
     // Return true on sucess
-    public static boolean delTarget(String rule) {
+    public boolean delTarget(String rule) {
         String path = TARGET_PATH + "." + rule.replaceAll("[\\.:]", "_");
         if(config.contains(path)) {
             config.set(path, null);
@@ -81,7 +101,7 @@ public class TargetRule {
     }
 
     // Return true on sucess
-    public static boolean delExclude(String rule) {
+    public boolean delExclude(String rule) {
         String path = EXCLUDE_PATH + "." + rule.replaceAll("[\\.:]", "_");
         if(config.contains(path)) {
             config.set(path, null);
@@ -90,38 +110,44 @@ public class TargetRule {
         return false;
     }
 
-    public static List<String> getTargets() {
+    public List<String> getTargets() {
         List<String> targets = new ArrayList<>();
-        ConfigurationSection rules = (ConfigurationSection) config.get(TARGET_PATH);
+        ConfigurationSection rules = config.getConfigurationSection(TARGET_PATH);
 
         if(rules != null) {
             for(String key : rules.getKeys(false)) {
-                targets.add(rules.getString(key + ".type") + ":" + rules.getString(key + ".rule"));
+                targets.add(
+                        rules.getString(key + "." + TYPE_PATH) + ":" +
+                        rules.getString(key + "." + RULE_PATH) + " until " +
+                        rules.getString(key + "." + DURA_PATH));
             }
         }
         return targets;
     }
 
-    public static List<String> getExcludes() {
+    public List<String> getExcludes() {
         List<String> excludes = new ArrayList<>();
-        ConfigurationSection rules = (ConfigurationSection) config.get(EXCLUDE_PATH);
+        ConfigurationSection rules = config.getConfigurationSection(EXCLUDE_PATH);
 
         if(rules != null) {
             for(String key : rules.getKeys(false)) {
-                excludes.add(rules.getString(key + ".type") + ":" + rules.getString(key + ".rule"));
+                excludes.add(
+                        rules.getString(key + "." + TYPE_PATH) + ":" +
+                        rules.getString(key + "." + RULE_PATH) + " until " +
+                        rules.getString(key + "." + DURA_PATH));
             }
         }
         return excludes;
     }
 
-    public static boolean isTarget(Entity entity) {
+    public boolean isTarget(Entity entity) {
         ConfigurationSection rules;
 
         for(String check : new String[] {EXCLUDE_PATH, TARGET_PATH}) {
-            rules = (ConfigurationSection) config.get(check);
+            rules = config.getConfigurationSection(check);
             if(rules != null) {
                 for(String key : rules.getKeys(false)) {
-                    if(checkRule(entity, rules.getString(key + ".type"), rules.getString(key + ".rule")))
+                    if(checkRule(entity, rules.getConfigurationSection(key)))
                         return check.equals(TARGET_PATH);
                 }
             }
@@ -131,10 +157,23 @@ public class TargetRule {
     }
 
     @SuppressWarnings("deprecation")
-    private static boolean checkRule(Entity entity, String type, String rule) {
+    private boolean checkRule(Entity entity, ConfigurationSection section) {
+
+        String type = section.getString(TYPE_PATH);
+        String rule = section.getString(RULE_PATH);
+        String time = section.getString(DURA_PATH);
 
         if(type == null || rule == null)
             return false;
+
+        try {
+            if(!checkTime(time)) {
+                section.getParent().set(section.getName(), null);
+                return false;
+            }
+        } catch(DateTimeException exc) {
+            section.set(DURA_PATH, null);
+        }
 
         switch(type.toLowerCase()) {
             case Rule.TYPE:
@@ -147,5 +186,16 @@ public class TargetRule {
             default:
                 return false;
         }
+    }
+
+    // Return true when time has not been reached or time is null
+    private boolean checkTime(String time) throws DateTimeException {
+
+        if(time == null)
+            return true;
+
+        LocalDateTime until = LocalDateTime.parse(time);
+
+        return until.isAfter(LocalDateTime.now());
     }
 }

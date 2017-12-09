@@ -25,11 +25,9 @@ public class AttackTargetGoal extends BehaviorGoalAdapter {
     private final NPC npc;
     private CancelReason reason;
     private Entity target;
-    private TargetRule TargetRule;
 
     public AttackTargetGoal(NPC npc, boolean aggressive) {
         this.npc = npc;
-        this.TargetRule = TargetRule;
         this.aggressive = aggressive;
     }
 
@@ -46,7 +44,7 @@ public class AttackTargetGoal extends BehaviorGoalAdapter {
 
         double range = Util.getTargetRange(npc);
 
-        if(target != null && !TargetRule.isTarget(target) ||
+        if(target != null && !TargetRule.getInstance().isTarget(target) ||
                 target.getLocation().distanceSquared(Util.getHomeLocation(npc))
                     > range * range) {
             finished = true;
@@ -68,7 +66,7 @@ public class AttackTargetGoal extends BehaviorGoalAdapter {
         Collection<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
         this.target = null;
         for(Entity entity : nearby) {
-            if(TargetRule.isTarget(entity) &&
+            if(TargetRule.getInstance().isTarget(entity) &&
                     (target == null ||
                     entity.getLocation().distanceSquared(npc.getStoredLocation()) <
                     target.getLocation().distanceSquared(npc.getStoredLocation()))) {

@@ -105,18 +105,7 @@ public class ShootTargetGoal extends BehaviorGoalAdapter {
             useItem(shooter);
 
         if(shootCoolDown <= 0) {
-
-            double distance = shtLoc.distanceSquared(tgtLoc);
-
-            Projectile arrow = (Projectile) shooter.getWorld().spawnArrow(
-                    shtLoc.clone().add(shtLoc.getDirection().normalize()),
-                    new Vector(tgtLoc.getX() - shtLoc.getX(),
-                        tgtLoc.getY() - shtLoc.getY() + distance / 160,
-                        tgtLoc.getZ() - shtLoc.getZ())
-                    .normalize(), 2f, 1);
-
-            arrow.setShooter(shooter);
-
+            shooter.launchProjectile(org.bukkit.entity.Arrow.class);
             shootCoolDown = SHOOT_CD;
         } else {
             shootCoolDown--;

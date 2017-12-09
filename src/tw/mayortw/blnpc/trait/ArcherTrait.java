@@ -43,6 +43,11 @@ public class ArcherTrait extends Trait {
         goalCtl.addGoal(new MoveToHomeGoal(getNPC()), 1);
 
         NavigatorParameters navParm = getNPC().getNavigator().getLocalParameters();
+        navParm.stuckAction((a, n) -> {
+            a.teleport(n.getTargetAsLocation().add(0, 1, 0),
+                    org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.PLUGIN);
+            return false;
+        });
         navParm.stationaryTicks(100);
         navParm.useNewPathfinder(true);
 

@@ -7,15 +7,35 @@ depend:
     - Citizens
 commands:
     blnpc:
-        usage: "Usage: /<command> < sethome | clearhome | setrange <range> | clearrange | setdamage <damage> | cleardamage >"
+        usage: |
+            Usage: /<command> <cmd>
+            cmd:
+                sethome 居民：設定家；守衛：設定哨點
+                clearhome 清除家/哨點
+                setrange <range> 居民：設定亂走範圍，守衛：設定攻擊範圍
+                clearrange 使用預設範圍（10格）
+                setdamage <damage> 設定守衛的攻擊傷害
+                cleardamage 使用預設傷害（1）
         permission: blnpc.edit
     bltgt:
         usage: |
-            Usage: /<command> < addtarget <rule> [duration] | addexclude <rule> [duration] | deltarget <rule> | delexclude <rule> | cleartarget | clearexclude | listtarget | listexclude >
-            <rule> can be < type | name | perm>:<rule>
-            Example: type:chicken specifies all chicken, name:Steve specifies entities with name Steve
-            [duration] specifies the duration of the rule
-            Example: 5m10s, 1d6h. Valid units are Y M d h m s
+            Usage: /<command> <cmd>
+            cmd:
+                addtarget <rule> [duration] 新增目標
+                addexclude <rule> [duration] 新增忽略的目標
+                deltarget <rule> 移除目標
+                delexclude <rule> 移除忽略的目標
+                cleartarget 移除所有目標
+                clearexclude 移出所有忽略的目標
+                listtarget 列出所有目標
+                listexclude 列出所有忽略的目標
+            rule: 攻擊/忽略符合規則的實體
+                type:<entity_type> 實體種類。 可用所有 Minecraft 實體加上 "player" and "npc".
+                name:<entity_name> 實體名稱。
+                perm:<permission>  實體權限。
+                player:<player_name> 有 player_name 的 UUID 的玩家。
+            duaration: 規則時限
+                Example: 5m10s, 1d6h. 單位有 Y M d h m s
         permission: blnpc.edit
 permissions:
     blnpc.edit:

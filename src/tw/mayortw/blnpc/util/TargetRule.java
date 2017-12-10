@@ -8,8 +8,8 @@ import org.bukkit.plugin.Plugin;
 import java.time.DateTimeException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TargetRule {
 
@@ -122,30 +122,30 @@ public class TargetRule {
         return false;
     }
 
-    public List<String> getTargets() {
-        List<String> targets = new ArrayList<>();
+    public Map<String, String> getTargets() {
+        Map<String, String> targets = new HashMap<>();
         ConfigurationSection rules = config.getConfigurationSection(TARGET_PATH);
 
         if(rules != null) {
             for(String key : rules.getKeys(false)) {
-                targets.add(
+                targets.put(
                         rules.getString(key + "." + TYPE_PATH) + ":" +
-                        rules.getString(key + "." + RULE_PATH) + " until:" +
+                        rules.getString(key + "." + RULE_PATH),
                         rules.getString(key + "." + DURA_PATH));
             }
         }
         return targets;
     }
 
-    public List<String> getExcludes() {
-        List<String> excludes = new ArrayList<>();
+    public Map<String, String> getExcludes() {
+        Map<String, String> excludes = new HashMap<>();
         ConfigurationSection rules = config.getConfigurationSection(EXCLUDE_PATH);
 
         if(rules != null) {
             for(String key : rules.getKeys(false)) {
-                excludes.add(
+                excludes.put(
                         rules.getString(key + "." + TYPE_PATH) + ":" +
-                        rules.getString(key + "." + RULE_PATH) + " until:" +
+                        rules.getString(key + "." + RULE_PATH),
                         rules.getString(key + "." + DURA_PATH));
             }
         }

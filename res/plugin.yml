@@ -11,8 +11,11 @@ commands:
         permission: blnpc.edit
     bltgt:
         usage: |
-            Usage: /<command> < addtarget <rule> | deltarget <rule> | addexclude <rule> | delexclude <rule> | listtarget | listexclude >
-            Where <rule> can be type:<entity_type>, name:<entity_name>, or perm:<permission>
+            Usage: /<command> < addtarget <rule> [duration] | addexclude <rule> [duration] | deltarget <rule> | delexclude <rule> | cleartarget | clearexclude | listtarget | listexclude >
+            <rule> can be < type | name | perm>:<rule>
+            Example: type:chicken specifies all chicken, name:Steve specifies entities with name Steve
+            [duration] specifies the duration of the rule
+            Example: 5m10s, 1d6h. Valid units are Y M d h m s
         permission: blnpc.edit
 permissions:
     blnpc.edit:

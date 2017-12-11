@@ -133,9 +133,11 @@ public class TargetRule {
         String[] t = rule.split(":");
         if(t.length >= 2 && t[0].equals(Rule.PLAYER)) { // Convert player name to uuid
             Player player = Bukkit.getPlayer(t[1]);
-            if(player == null)
-                return false;
-            t[1] = player.getUniqueId().toString();
+            if(player == null) {
+                t[1] = Bukkit.getOfflinePlayer(t[1]).getUniqueId().toString();
+            } else {
+                t[1] = player.getUniqueId().toString();
+            }
             rule = t[0] + ":" + t[1];
         }
 
@@ -153,9 +155,11 @@ public class TargetRule {
         String[] t = rule.split(":");
         if(t.length >= 2 && t[0].equals(Rule.PLAYER)) { // Convert player name to uuid
             Player player = Bukkit.getPlayer(t[1]);
-            if(player == null)
-                return false;
-            t[1] = player.getUniqueId().toString();
+            if(player == null) {
+                t[1] = Bukkit.getOfflinePlayer(t[1]).getUniqueId().toString();
+            } else {
+                t[1] = player.getUniqueId().toString();
+            }
             rule = t[0] + ":" + t[1];
         }
 

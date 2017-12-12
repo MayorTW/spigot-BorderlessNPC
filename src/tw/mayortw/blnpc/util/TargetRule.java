@@ -171,6 +171,26 @@ public class TargetRule {
         return false;
     }
 
+    // Return number of rules deleted
+    public int clearTarget() {
+        if(!config.contains(TARGET_PATH))
+            return 0;
+
+        int count = config.getConfigurationSection(TARGET_PATH).getValues(false).size();
+        config.set(TARGET_PATH, null);
+        return count;
+    }
+
+    // Return number of rules deleted
+    public int clearExclude() {
+        if(!config.contains(EXCLUDE_PATH))
+            return 0;
+
+        int count = config.getConfigurationSection(EXCLUDE_PATH).getValues(false).size();
+        config.set(EXCLUDE_PATH, null);
+        return count;
+    }
+
     @SuppressWarnings("deprecation")
     public Map<String, String> getTargets() {
         Map<String, String> targets = new HashMap<>();

@@ -175,25 +175,11 @@ public class BorderlessNPCPlugin extends JavaPlugin implements Listener {
                         sender.sendMessage(args[1] + " removed from exclude list");
                     return true;
                 case "cleartarget":
-                    {
-                        int count = 0;
-                        for(String target : targetRule.getTargets().keySet()) {
-                            targetRule.delTarget(target);
-                            count++;
-                        }
-                        sender.sendMessage("Removed " + count + " targets");
-                        return true;
-                    }
+                    sender.sendMessage("Removed " + targetRule.clearTarget() + " targets");
+                    return true;
                 case "clearexclude":
-                    {
-                        int count = 0;
-                        for(String exclude : targetRule.getExcludes().keySet()) {
-                            targetRule.delExclude(exclude);
-                            count++;
-                        }
-                        sender.sendMessage("Removed " + count + " excludes");
-                        return true;
-                    }
+                    sender.sendMessage("Removed " + targetRule.clearExclude() + " excludes");
+                    return true;
                 case "listtarget":
                     sender.sendMessage("List of targets: " + targetRule.getTargets().toString());
                     return true;

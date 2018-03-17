@@ -10,6 +10,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.citizensnpcs.api.ai.GoalController;
@@ -145,12 +146,16 @@ public class ResidentTrait extends Trait {
         @Override
         public void run(NPC npc, Block point, ListIterator<Block> path) {
             BlockState state = point.getState();
-            Door door = (Door) state.getData();
-            if (npc.getStoredLocation().distance(point.getLocation()) < 2) {
-                DoorChecker doorChecker = new DoorChecker(npc, point, door);
-                if(!doorCheckers.contains(doorChecker)) {
-                    doorChecker.runTaskTimer(BorderlessNPCPlugin.getPlugin(BorderlessNPCPlugin.class), 5, 10);
-                    doorCheckers.add(doorChecker);
+            MaterialData data = state.getData();
+
+            if(data instanceof Door) {
+                Door door = (Door) state.getData();
+                if (npc.getStoredLocation().distance(point.getLocation()) < 2) {
+                    DoorChecker doorChecker = new DoorChecker(npc, point, door);
+                    if(!doorCheckers.contains(doorChecker)) {
+                        doorChecker.runTaskTimer(BorderlessNPCPlugin.getPlugin(BorderlessNPCPlugin.class), 5, 10);
+                        doorCheckers.add(doorChecker);
+                    }
                 }
             }
         }
@@ -192,20 +197,25 @@ public class ResidentTrait extends Trait {
             }
 
             private void openDoor(boolean open) {
-                if(door.isOpen() != open) {
-                    point.getWorld().playSound(point.getLocation(),
-                            open ? Sound.BLOCK_WOODEN_DOOR_OPEN : Sound.BLOCK_WOODEN_DOOR_CLOSE,
-                            .8f, 1);
-                    swingArm(npc.getEntity());
-                }
 
                 boolean bottom = !door.isTopHalf();
                 Block set = bottom ? point : point.getRelative(BlockFace.DOWN);
                 BlockState state = set.getState();
-                door = (Door) state.getData();
-                door.setOpen(open);
-                state.setData(door);
-                state.update();
+                MaterialData data = state.getData();
+                if(data instanceof Door) {
+
+                    if(door.isOpen() != open) {
+                        point.getWorld().playSound(point.getLocation(),
+                                open ? Sound.BLOCK_WOODEN_DOOR_OPEN : Sound.BLOCK_WOODEN_DOOR_CLOSE,
+                                .8f, 1);
+                        swingArm(npc.getEntity());
+                    }
+
+                    door = (Door) data;
+                    door.setOpen(open);
+                    state.setData(door);
+                    state.update();
+                }
             }
 
             @Override

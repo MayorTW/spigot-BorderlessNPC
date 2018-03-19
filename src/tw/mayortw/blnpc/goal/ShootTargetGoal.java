@@ -111,9 +111,11 @@ public class ShootTargetGoal extends BehaviorGoalAdapter {
             double y = tgtLoc.getY() - shtLoc.getY();
             double z = tgtLoc.getZ() - shtLoc.getZ();
 
+            double dist = tgtLoc.distanceSquared(shtLoc);
+
             shooter.launchProjectile(org.bukkit.entity.Arrow.class,
-                    new Vector(x + Math.random() - .5, y + tgtLoc.distance(shtLoc) * 0.20000000298023224D + Math.random() - .5, z + Math.random() - .5)
-                    .normalize().multiply(1.6))
+                    new Vector(x + Math.random() - .5, y * 1 + dist * 0.0073 + Math.random() - .5, z + Math.random() - .5)
+                    .normalize().multiply(2))
                 .setPickupStatus(Arrow.PickupStatus.DISALLOWED);
 
             shootCoolDown = SHOOT_CD;

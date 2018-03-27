@@ -80,8 +80,7 @@ public class ShootTargetGoal extends BehaviorGoalAdapter {
                     <= range * range && //getNearbyEntities uses a box, but i'm using a circle
                     Util.canSeeTarget(npc, entity)) {
                 target = entity;
-                useItem(npc.getEntity());
-                shootCoolDown = 15; //Time to animate
+                shootCoolDown = 30;
                 break;
             }
         }
@@ -102,8 +101,8 @@ public class ShootTargetGoal extends BehaviorGoalAdapter {
 
         npc.faceLocation(target.getLocation()); //tgtLoc can be eye location
 
-        if(shootCoolDown == 15)
-            useItem(shooter);
+        if(shootCoolDown == 30)
+            startUseItem(shooter);
 
         if(shootCoolDown <= 0) {
 
@@ -119,14 +118,22 @@ public class ShootTargetGoal extends BehaviorGoalAdapter {
                 .setPickupStatus(Arrow.PickupStatus.DISALLOWED);
 
             shootCoolDown = SHOOT_CD;
+
+            stopUseItem(shooter);
         } else {
             shootCoolDown--;
         }
     }
 
-    public void useItem(Entity entity) {
+    private void startUseItem(Entity entity) {
         if (entity instanceof Player) {
             PlayerAnimation.START_USE_MAINHAND_ITEM.play((Player) entity);
+        }
+    }
+
+    private void stopUseItem(Entity entity) {
+        if (entity instanceof Player) {
+            PlayerAnimation.STOP_USE_ITEM.play((Player) entity);
         }
     }
 }
